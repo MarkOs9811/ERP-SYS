@@ -1,38 +1,244 @@
-.App {
+/* Estilos base */
+.main-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #e9f3ff;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #0e182c;
+  color: #ecf0f1;
+  overflow-y: auto;
+  transition: width 0.3s ease, border-radius 0.3s ease; /* Agregado efecto suave para border-radius */
+  width: 250px; /* Ancho del sidebar abierto */
+  padding-top: 20px; /* Espacio superior */
+  
+}
+
+/* Sidebar comprimido */
+.sidebar.compressed {
+  width: 80px; /* Ancho del sidebar comprimido */
+}
+
+/* Items dentro del sidebar */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;  
+  margin: 0 calc(5%); /* Márgenes izquierdo y derecho dinámicos */
+  transition: padding 0.3s ease, background-color 0.3s ease; /* Agregado efecto suave para hover */
+  border-radius: 5px; /* Redondear las esquinas de los items */
+}
+
+/* Para asegurar que el hijo no sobresalga de los 250px del contenedor */
+.sidebar .menu-item {
+  max-width: calc(100% - 10px); /* Resta 10px (5px por lado) para asegurar que el hijo no sobresalga */
+  margin-left: auto; /* Centrado horizontal */
+  margin-right: auto;
+  text-align: center; /* Asegura que los íconos estén centrados */
+  padding-left: 20px;
+}
+
+/* Centrar los íconos en el sidebar comprimido */
+.sidebar.compressed .menu-item {
+  height: 60px;
+  width: 100%;
+  justify-content: center; /* Centra todo el contenido horizontalmente */
+  padding: 10px 23px; /* Ajusta el padding para reducir espacio */
+  cursor: pointer;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.sidebar.compressed .icon {
+  margin: 0; /* Asegúrate de que no haya margen extra alrededor del ícono */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Efecto hover y activo para items */
+.menu-item:hover,
+.menu-item.active {
+  background-color: #354c69;
+  transition: background-color 0.3s ease; /* Efecto suave */
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Enlace dentro de los items */
+.menu-item a {
+  color: #ecf0f1;
+  text-decoration: none;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  width: 100%;
 }
 
-.App-link {
-  color: #61dafb;
+/* Íconos */
+.icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Texto de los items */
+.menu-item span {
+  margin: 10px;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar.compressed span {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Estilo para la opción activa */
+.menu-item.active {
+  background-color: #2070e7; /* Fondo naranja para opción activa */
+  color: #ffffff; /* Texto blanco */
+}
+
+/* Ajustes para el enlace dentro de la opción activa */
+.menu-item.active a {
+  color: #ffffff;
+  font-weight: bold; /* Resalta el texto */
+}
+
+/* Ícono dentro de la opción activa */
+.menu-item.active .icon {
+  transform: scale(1.2); /* Efecto de escala */
+}
+
+/* Efecto hover para elementos no activos */
+.menu-item:hover:not(.active) {
+  background-color: #354c69; /* Fondo azul oscuro */
+  color: #ffffff;
+}
+
+/* Cabecera del Sidebar */
+.sidebar-header {
+  background-color: transparent; /* Fondo transparente */
+  color: #ffffff; /* Texto blanco */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centrado horizontal */
+  padding: 15px; /* Espaciado */
+  gap: 10px; /* Espacio entre ícono y título */
+  transition: height 0.3s ease;
+}
+
+/* Ícono de la cabecera */
+.sidebar-header .header-icon {
+  font-size: 1.8rem; /* Tamaño del ícono */
+}
+
+/* Título de la cabecera */
+.sidebar-header .header-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* Sidebar comprimido (oculta el título de la cabecera) */
+.sidebar.compressed .sidebar-header .header-title {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Contenido */
+.content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  width: calc(100% - 250px);
+}
+
+.content.open {
+  margin-left: 250px;
+}
+
+.content:not(.open) {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+/* ========== Header ========== */
+.navbar {
+  background-color: transparent; /* Fondo transparente */
+  color: #ecf0f1; /* Texto blanco */
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1001; /* Encima del sidebar */
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: #ecf0f1;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.navbar-title {
+  margin: 0;
+  font-size: 1.5rem; /* Título del navbar */
+  font-weight: 500;
+}
+
+.navbar-icon {
+  background: none;
+  border: none;
+  color: #ecf0f1;
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.card {
+  box-shadow: 0 4px 8px rgba(72, 80, 104, 0.1), 0 2px 16px rgba(42, 54, 71, 0.1);
+  border-radius: 15px!important; /* Puedes ajustar el radio para redondear las esquinas */
+  transition: box-shadow 0.3s ease-in-out; /* Efecto suave al pasar el ratón */
+}
+
+.badge-user{
+  display: inline-block;
+  background-color: #d7eaff; /* Azul Bootstrap */
+  color: rgb(9, 45, 87);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  margin-top: 4px; /* Espaciado entre nombre y badge */
+  font-weight: bold;
+}
+
+
+/* ========== Responsivo ========== */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 80px; /* Sidebar comprimido por defecto en pantallas pequeñas */
+    border-radius: 0; /* Eliminar el redondeo en pantallas pequeñas */
   }
-  to {
-    transform: rotate(360deg);
+
+  .content {
+    margin-left: 80px; /* Ajuste para pantallas pequeñas */
+    width: calc(100% - 80px);
+  }
+
+  .sidebar.open {
+    width: 200px; /* Menor ancho para pantallas pequeñas */
+  }
+
+  .content.open {
+    margin-left: 200px;
+    width: calc(100% - 200px);
   }
 }
