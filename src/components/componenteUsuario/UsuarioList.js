@@ -40,14 +40,14 @@ export function UsuariosList() {
       wrap: true, // Ajusta el contenido si excede el ancho
     },
     {
-      name: 'Usuario',
+      name: 'USUARIO',
       selector: row => row.email,
       sortable: true,
       minWidth: 'auto', // Establece un ancho mínimo
       wrap: true,
     },
     {
-      name: 'Nombre y Apellidos',
+      name: 'NOMBRE Y APELLIDOS',
       selector: row => (
         <div>
           <div>
@@ -63,14 +63,14 @@ export function UsuariosList() {
       wrap: true,
     },
     {
-      name: 'Telefono',
+      name: 'TELEFONO',
       selector: row => row.empleado.persona.telefono,
       sortable: true,
       minWidth: 'auto', // Personaliza el ancho
       wrap: true,
     },
     {
-      name: 'Documento de Identidad',
+      name: 'DOC. IDENTIDAD',
       selector: row => row.empleado && row.empleado.persona
         ? row.empleado.persona.documento_identidad
         : 'Documento no disponible',
@@ -79,7 +79,7 @@ export function UsuariosList() {
       wrap: true,
     },
     {
-      name: 'Acciones',
+      name: 'ACCIONES',
       cell: (row) => (
         <button className="btn btn-outline-dark m-auto">
           <FontAwesomeIcon icon={faInfo} className="" />
@@ -95,7 +95,6 @@ export function UsuariosList() {
     
     <DataTable
       className="tablaGeneral"
-      title="Lista de Usuarios"
       columns={columns}
       data={usuarios}
       pagination
