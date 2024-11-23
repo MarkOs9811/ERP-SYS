@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCard, faUser, faEnvelope, faCoins, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -11,12 +11,69 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
     nombres: '',
     apellidos: '',
     correo_electronico: '',
-    area: '4',
-    cargo: '7',
+    area: '',
+    cargo: '',
     salario: '',
-    horario: 1,
+    horario: '',
   });
 
+  const [areas, setAreas] = useState([]);
+  const [cargos, setCargos] = useState([]);
+  const [horarios, setHorarios] = useState([]);
+
+  // TRAYENDO DATOS DE MI DB CARGO,AREA, Y HORARIO
+  useEffect(() => {
+    // Función para cargar datos de la API
+    const fetchData = async () => {
+      try {
+        const [areasRes, cargosRes, horariosRes] = await Promise.all([
+          axios.get('http://erp-api.test/api/areas'), // Endpoint para áreas
+          axios.get('http://erp-api.test/api/cargos'), // Endpoint para cargos
+          axios.get('http://erp-api.test/api/horarios'), // Endpoint para horarios
+        ]);
+
+        setAreas(areasRes.data); // Guardar las áreas
+        setCargos(cargosRes.data); // Guardar los cargos
+        setHorarios(horariosRes.data); // Guardar los horarios
+
+      } catch (error) {
+        console.error('Error al cargar los datos:', error);
+
+        toast.error('Error al cargar datos para el formulario', {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+    };
+
+    fetchData();
+  }, []); 
+
+  // Manejar el cambio del cargo y consultar el salario
+  const handleCargoChange = async (e) => {
+    const selectedCargoId = e.target.value;
+    setFormData({ ...formData, cargo: selectedCargoId }); // Actualizar el cargo en el estado
+
+    if (selectedCargoId) {
+      try {
+        // Consultar el salario del cargo seleccionado
+        const response = await axios.get(`http://erp-api.test/api/getSalarioCargo/${selectedCargoId}`);
+        setFormData({ ...formData, cargo: selectedCargoId, salario: response.data.salario });
+      } catch (error) {
+        console.error("Error al obtener el salario:", error);
+      }
+    } else {
+      // Si no hay cargo seleccionado, limpia el salario
+      setFormData({ ...formData, salario: "" });
+    }
+  };
+
+  // guardar usuario api
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -67,6 +124,8 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
       }
     }
   };
+
+
 
   const handleDocumentoChange = (e) => {
     const { value } = e.target;
@@ -123,10 +182,11 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
       {/* Área */}
       <div className="mb-3">
         <div className="form-floating">
-          <select id="area" className="form-select" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })}>
-            <option value="4">Administración</option>
-            <option value="7">Almacén</option>
-            <option value="11">Ventas</option>
+        <select id="area" className="form-select" value={formData.area} onChange={(e) => setFormData({ ...formData, area: e.target.value })}>
+            <option value="" disabled>Seleccione un área</option>
+            {areas.map((area) => (
+              <option key={area.id} value={area.id}>{area.nombre}</option>
+            ))}
           </select>
           <label htmlFor="area">Área</label>
         </div>
@@ -135,12 +195,12 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
       {/* Cargo */}
       <div className="mb-3">
         <div className="form-floating">
-          <select id="cargo" className="form-select" value={formData.cargo} onChange={(e) => setFormData({ ...formData, cargo: e.target.value })}>
-            <option value="7">Administrador</option>
-            <option value="14">Atención al Cliente</option>
-            <option value="15">Almacén</option>
-            <option value="16">Contador</option>
-          </select>
+            <select id="cargo" className="form-select" value={formData.cargo} onChange={handleCargoChange} >
+                <option value="" disabled>Seleccione un cargo</option>
+                {cargos.map((cargo) => (
+                  <option key={cargo.id} value={cargo.id}>{cargo.nombre}</option>
+                ))}
+            </select>
           <label htmlFor="cargo">Cargo</label>
         </div>
       </div>
@@ -156,8 +216,13 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
       {/* Horario */}
       <div className="mb-3">
         <div className="form-floating">
-          <input type="number" className="form-control" id="horario" value={formData.horario} onChange={(e) => setFormData({ ...formData, horario: e.target.value })} min="1" />
-          <label><FontAwesomeIcon icon={faClock} className="me-2" />Horario</label>
+          <select id="horario" className="form-select" value={formData.horario} onChange={(e) => setFormData({ ...formData, horario: e.target.value })}>
+            <option value="" disabled>Seleccione un horario</option>
+            {horarios.map((horario) => (
+              <option key={horario.id} value={horario.id}>{horario.horaEntrada} - {horario.horaSalida}</option>
+            ))}
+          </select>
+          <label htmlFor="horario"><FontAwesomeIcon icon={faClock} className="me-2" />Horario</label>
         </div>
       </div>
   

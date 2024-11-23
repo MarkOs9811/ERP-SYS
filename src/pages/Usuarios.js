@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify';
 export function Usuarios() {
   const [showModal, setShowModal] = useState(false);
   const [updateList, setUpdateList] = useState(false);
+  const [search, setSearch] = useState('');
 
   // Función para abrir el modal
   const handleOpenModal = () => setShowModal(true);
@@ -23,21 +24,29 @@ export function Usuarios() {
     <div className='row m-4'>
       <div className='col-md-12'>
         <div className='card border-0'>
-          <div className='card-header d-flex justify-content-between'>
-            <div className='m-2'>
-              <h4 className='card-title'>Lista de Usuarios</h4>
+          <div className="card-header d-flex justify-content-between align-items-center">
+            <div className="m-2">
+              <h4 className="card-title mb-0">Lista de Usuarios</h4>
             </div>
-            <button className='btn ms-auto' onClick={handleOpenModal}>
-              <FontAwesomeIcon icon={faPlus} className="icon" />
-            </button>
+
+            <div className="d-flex align-items-center">
+              <div className="d-flex">
+                <input type="text" placeholder="Buscar..." className="form-control"  value={search}
+                  onChange={(e) => setSearch(e.target.value)} />
+                  <button className="btn ms-2" onClick={handleOpenModal}>
+                    <FontAwesomeIcon icon={faPlus} className="icon" />
+                  </button>
+              </div>
+              
+            </div>
           </div>
           <div className='card-body'>
-            <UsuariosList updateList={updateList} />
+            <UsuariosList search={search} updateList={updateList} />
           </div>
         </div>
       </div>
 
-      {/* Modal de React-Bootstrap */}
+      {/* Modal para agregar usuario*/}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Registrar Usuario</Modal.Title>
@@ -47,6 +56,7 @@ export function Usuarios() {
           <UsuarioForm handleCloseModal={handleCloseModal} />
         </Modal.Body>
       </Modal>
+      
       <ToastContainer />
     </div>
   );
