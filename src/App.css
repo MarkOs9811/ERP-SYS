@@ -2,8 +2,8 @@
 .main-container {
   display: flex;
   height: 100vh;
-  overflow: hidden;
-  background-color: #e9f3ff;
+  background-color: #f0f7ff;
+  overflow: auto;
 }
 
 /* Sidebar */
@@ -204,67 +204,107 @@
 }
 
 .card {
-  box-shadow: 0 4px 8px rgba(72, 80, 104, 0.1), 0 2px 16px rgba(42, 54, 71, 0.1);
-  border-radius: 15px!important; /* Puedes ajustar el radio para redondear las esquinas */
-  transition: box-shadow 0.3s ease-in-out; /* Efecto suave al pasar el ratón */
+  box-shadow: 0 4px 8px rgba(91, 102, 134, 0.1), 0 2px 16px rgba(83, 111, 150, 0.1);
+  border-radius: 10px !important; /* Redondeo */
+  transition: box-shadow 0.3s ease-in-out; /* Efecto suave */
+  border: none!important;
+  overflow: hidden;
 }
 
+
+.card-header {
+  background-color: white!important;
+  font-weight: bold; 
+  border: none!important;
+  border-top-left-radius: 15px; /* Ajuste del borde redondeado */
+  border-top-right-radius: 15px; /* Ajuste del borde redondeado */
+}
+
+.titulo-card-especial{
+  color: #007be0!important;
+}
+/* Estilo general para las tarjetas de estadísticas */
+.stats-card {
+  box-shadow: 0 4px 8px rgba(72, 80, 104, 0.1), 0 2px 16px rgba(42, 54, 71, 0.1);
+  border-radius: 15px; /* Bordes redondeados */
+  background-color: #f8f9fa; /* Fondo claro */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  display: flex; /* Usamos Flexbox */
+  align-items: center; /* Alineación vertical */
+  padding: 5px; /* Espaciado interno */
+}
+
+.stats-card:hover {
+  transform: translateY(-5px); /* Animación al pasar el mouse */
+  box-shadow: 0 6px 12px rgba(72, 80, 104, 0.15), 0 4px 24px rgba(42, 54, 71, 0.15);
+}
+
+/* Estilo para el contenedor del ícono */
+.stats-card .card-body {
+  display: flex;
+  align-items: center; /* Alineación vertical del ícono y el texto */
+}
+
+.stats-card .icon {
+  font-size: 2.5rem; /* Tamaño del ícono */
+  color: #007be098; /* Color azul del ícono */
+  margin-right: 5px; /* Espaciado a la derecha del ícono */
+  position: absolute;
+  top: 25%;
+  left: 20px;
+}
+
+.stats-card .card-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #777777; /* Color oscuro */
+}
+
+.stats-card .card-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #007be0; /* Color azul del texto */
+}
+
+.nombreUsuarioTabla{
+  text-transform: capitalize;
+}
 .badge-user{
   display: inline-block;
-  background-color: #d7eaff; /* Azul Bootstrap */
-  color: rgb(9, 45, 87);
+  background-color: #edf6ff; /* Azul Bootstrap */
+  color: rgb(86, 121, 161);
   padding: 2px 8px;
   border-radius: 5px;
   font-size: 0.7rem;
   margin-top: 4px; /* Espaciado entre nombre y badge */
   font-weight: bold;
 }
-/* ESTILOS PARA FORMULARIO */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f4f6f9;
+
+/* ESTILOS PARA TABLAS GENERALES */
+/* Color de fondo de la tabla y las filas */
+
+
+
+.tablaGeneral .rdt_TableBody .rdt_TableRow {
+  background-color: #f5f8fc !important; /* Color de fondo de las filas */
 }
 
-.login-form {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  width: 300px;
+.tablaGeneral .rdt_TableBody .rdt_TableRow:hover {
+  background-color: #fbfdff !important; /* Color al pasar el mouse */
 }
 
-.login-form h2 {
-  margin-bottom: 20px;
+.tablaGeneral .rdt_TableBody .rdt_TableCell {
+  background-color: #fbfdff !important; /* Color de fondo de las celdas */
 }
 
-.login-form .form-group {
-  margin-bottom: 15px;
+/* Color de la cabecera */
+.tablaGeneral .rdt_TableHead {
+  background-color: #ebeff5!important;
+}
+.cuerpo-tabla{
+  background-color: #ebeff5;
 }
 
-.login-form .form-group label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-.login-form .form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.login-form button {
-  width: 100%;
-  padding: 10px;
-  background: #007bff;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
 
   /* COLORES PARA BOTONES DE ACCION DEL SISTEMA */
   .btn-editar {
@@ -301,7 +341,22 @@
     background-color: #c82333;
     color: white;
 }
-
+.btn-guardar{
+    min-width: 35px;
+    width: 200px;
+    height: 50px;
+    line-height: 15px;
+    background-color: #007be0;
+    color: #e2ecff;
+    border:none;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+.btn-guardar:hover{
+  background-color: #024f8f;
+  color: #c9d6f0;
+}
 /* ========== Responsivo ========== */
 @media (max-width: 768px) {
   .sidebar {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import { Usuarios } from './pages/Usuarios';
 import { Header } from './components/Header';
@@ -22,6 +22,7 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
+        
           <Route path="/login" element={<Login />} />
           <Route
             path="/*"
@@ -36,10 +37,12 @@ function App() {
 
                     {/* CUERPO DE APLICACION */}
                     <div className="container">
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/usuarios" element={<Usuarios />} />
-                      </Routes>
+                      <>  <ToastContainer /> 
+                        <Routes>
+                          <Route path="/" element={<Home />} />
+                          <Route path="/usuarios" element={<Usuarios />} />
+                        </Routes>
+                        </>
                     </div>
                     {/* ======== */}
                   </div>

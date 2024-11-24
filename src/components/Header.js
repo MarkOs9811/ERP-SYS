@@ -11,7 +11,7 @@ export function Header({ onToggleSidebar }) {
     <header className="navbar text-dark bg-white">
     <nav className="container-fluid d-flex align-items-center justify-content-between">
         {/* Botón de compresión de sidebar */}
-        <button className="btn btn-dark me-3" onClick={onToggleSidebar}>
+        <button className="btn  me-3" onClick={onToggleSidebar}>
         <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
 

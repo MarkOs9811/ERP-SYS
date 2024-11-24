@@ -3,8 +3,10 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCard, faUser, faEnvelope, faCoins, faClock } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
+import ToastAlert from '../componenteToast/ToastAlert';
 
-export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleCloseModal de las props
+export function UsuarioForm({handleCloseModal}) {  // Desestructurando handleCloseModal de las props
+
   const [formData, setFormData] = useState({
     tipo_documento: 'DNI',
     numero_documento: '',
@@ -73,24 +75,19 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
     }
   };
 
-  // guardar usuario api
+  // GUARDAR USUARIOS API
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const response = await axios.post('http://erp-api.test/api/storeUsuario', formData);
-      
-      toast.success('Usuario registrado exitosamente', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-
-      // Cerrar el modal después del registro exitoso
-      handleCloseModal();  // Usar handleCloseModal cuando se envíe el formulario
+         
+      if (response.data.success) { 
+          ToastAlert("success", "Usuario registrado correctamente");
+          setTimeout(() => handleCloseModal(), 500);
+      } else {
+          ToastAlert("error", "Ocurrió un error al registrar");
+      }
+    
 
     } catch (error) {
       console.error('Error al enviar el formulario:', error);
@@ -102,25 +99,10 @@ export function UsuarioForm({ handleCloseModal }) {  // Desestructurando handleC
         for (let field in errors) {
           errorMessages += `${errors[field].join(', ')}\n`;
         }
-        toast.error(`${errorMessages}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        ToastAlert("error", errorMessages.trim());
+
       } else {
-        toast.error('Error al registrar el usuario', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+         ToastAlert("error", "Error al registrar el usuario");
       }
     }
   };

@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import {  faSave } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ToastAlert from "../componenteToast/ToastAlert";
 
 export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated }) {
     const [formData, setFormData] = useState({
@@ -111,42 +114,21 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        
+    
         try {
-            console.log("Enviando datos:", formData);
             const response = await axios.put(`http://erp-api.test/api/updateUsuario/${idUsuario}`, formData);
-            
-           
             if (response.data.success) {
-                toast.success("Usuario actualizado con éxito", {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
-            
+                ToastAlert("success", "Usuario actualizado con éxito");
+    
                 // Retrasar el cierre del modal y la actualización para dar tiempo al toast
                 handleCloseModal();
                 setTimeout(() => {
                     onUsuarioUpdated();
                 }, 3000); // Coincide con el tiempo de duración del toast
             } else {
-                toast.error("Error al actualizar el usuario. Por favor, intente nuevamente.", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                ToastAlert("error", "Error al actualizar el usuario. Por favor, intente nuevamente.");
             }
-            
         } catch (error) {
-           
-
-            // Manejo de errores
             if (error.response) {
                 if (error.response.status === 422) {
                     const errors = error.response.data.errors;
@@ -154,42 +136,14 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
                     for (const field in errors) {
                         errorMessage += `${field}: ${errors[field].join(', ')}. `;
                     }
-                    toast.error(errorMessage, {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });
+                    ToastAlert("error", errorMessage);
                 } else {
-                    toast.error("Hubo un error al guardar los cambios. Por favor, intente nuevamente.", {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });
+                    ToastAlert("error", "Hubo un error al guardar los cambios. Por favor, intente nuevamente.");
                 }
             } else if (error.request) {
-                toast.error("No se pudo conectar con el servidor. Por favor, intente nuevamente más tarde.", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                ToastAlert("error", "No se pudo conectar con el servidor. Por favor, intente nuevamente más tarde.");
             } else {
-                toast.error("Hubo un problema con la solicitud. Por favor, intente nuevamente.", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                ToastAlert("error", "Hubo un problema con la solicitud. Por favor, intente nuevamente.");
             }
         }
     };
@@ -356,8 +310,9 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
                     </div>
 
                     {/* Botón para enviar el formulario */}
-                    <div className="mb-3">
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                    <div className="mb-3 d-flex">
+                        <button type="submit" className="btn-guardar m-auto" disabled={loading}>
+                            <FontAwesomeIcon icon={faSave} className="me-2" />
                             {loading ? "Actualizando..." : "Actualizar Usuario"}
                         </button>
                     </div>

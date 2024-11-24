@@ -2,23 +2,33 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faHome, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 import {  faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { UsuarioEditar } from './UsuarioEditar';
 import { Modal } from 'react-bootstrap'; 
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import ModalAlertQuestion from '../componenteToast/ModalAlertQuestion';
+import ModalAlertActivar from '../componenteToast/ModalAlertActivar';
 
 
 // LOS PROPS SON PARAMETROS QUE SE ESTA RECIEBIENDO EN ESTA FUNCTION COMO "SEARCH" Y "UPDATELIST"
 export function UsuariosList({ search, updateList }) {
+
+
   const [usuarios, setUsuarios] = useState([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idUsuario, setIdUsuario] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showConfirmTrue, setShowConfirmTrue] = useState(false);
 
- 
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [nombreToDelete, setNombreToDelete] = useState(null);
+
+  const [userIdActive, setUserIdActive] = useState(null);
+  const [nombreToActive, setNombreToActive] = useState(null);
   // Función para obtener usuarios de la API
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -78,12 +88,78 @@ export function UsuariosList({ search, updateList }) {
   };
 
   const handleUsuarioUpdated = () => {
-    // Refresca la lista de usuarios
     fetchUsuarios();
+  }; 
+    // para abrir el modal de pregunta
+  const handleDeleteClick = (userId,nombre) => {
+    setShowConfirm(true);
+    setUserIdToDelete(userId);
+    setNombreToDelete(nombre);
   };
 
+  const handleActivarClick = (userId,nombre) => {
+    setShowConfirmTrue(true);
+    setUserIdActive(userId);
+    setNombreToActive(nombre);
+  };
+
+ 
+  const handleCloseModalQuestionEliminar = () => {
+    setShowConfirm(false);
+    setUserIdToDelete(null);
+    setNombreToDelete(null);
+  };
   
-  
+  const handleCloseModalQuestionActivar = () => {
+    setShowConfirmTrue(false);
+    setUserIdActive(null);
+    setNombreToActive(null);
+  };
+
+  // Handle para eliminar un usuario 
+  const handleEliminar = async (userId) => {
+    try {
+      // Realiza la solicitud POST para cambiar el estado del usuario
+      const response = await axios.post(`http://erp-api.test/api/usuarios/eliminar/${userId}`);
+      
+      if (response.data.success) {
+        toast.success("Usuario eliminado correctamente");
+        fetchUsuarios();
+        return true; 
+      } else {
+        toast.error("Error al cambiar el estado del usuario");
+        fetchUsuarios();
+        return false; // Error al cambiar el estado
+      }
+    } catch (error) {
+      toast.error("Error en la conexión");
+      fetchUsuarios();
+      return false; // Error en la conexión
+    }
+  };
+
+   // Handle para eliminar un usuario 
+   const handleActivarUser = async (userId) => {
+    try {
+      // Realiza la solicitud POST para cambiar el estado del usuario
+      const response = await axios.post(`http://erp-api.test/api/usuarios/activar/${userId}`);
+      
+      if (response.data.success) {
+        toast.success("Usuario activado correctamente");
+        fetchUsuarios();
+        return true; // Usuario eliminado con éxito
+      } else {
+        toast.error("Error al cambiar el estado del usuario");
+        fetchUsuarios();
+        return false; // Error al cambiar el estado
+      }
+    } catch (error) {
+      toast.error("Error en la conexión");
+      fetchUsuarios();
+      return false; // Error en la conexión
+    }
+  };
+
 
   if (loading) return <p>Cargando usuarios...</p>;
   if (error) return <p>{error}</p>;
@@ -93,30 +169,44 @@ export function UsuariosList({ search, updateList }) {
       name: 'ID',
       selector: (row) => row.id,
       sortable: true,
-      width: '70px',
       wrap: true,
+      center: true,
+     
     },
     {
       name: 'USUARIO',
       selector: (row) => row.email || 'No disponible',
       sortable: true,
       wrap: true,
+      center: true,
     },
     {
       name: 'NOMBRE Y APELLIDOS',
       selector: (row) => (
         <div>
-          <div>
+          <div className="nombreUsuarioTabla mt-2">
             {row.empleado?.persona?.nombre || 'N/A'} {row.empleado?.persona?.apellidos || 'N/A'}
           </div>
           {row.empleado?.persona?.correo && (
-            <small className="badge-user">{row.empleado.persona.correo}</small>
+            <small className="badge-user mb-2">{row.empleado.persona.correo}</small>
           )}
         </div>
       ),
       sortable: true,
-      width: '250px',
-      wrap: true,
+      
+    },
+    {
+      name: 'FECHA NACIMIENTO',
+      selector: (row) => (
+        <div>
+          <div className="mt-2">
+            {row.empleado?.persona?.fecha_nacimiento || 'N/A'} 
+          </div>
+          
+        </div>
+      ),
+      sortable: true,
+      
     },
     {
       name: 'TELEFONO',
@@ -127,30 +217,53 @@ export function UsuariosList({ search, updateList }) {
     {
       name: 'DOC. IDENTIDAD',
       selector: (row) =>
-        row.empleado?.persona?.documento_identidad || 'Documento no disponible',
+        row.empleado?.persona.documento_identidad || 'Documento no disponible',
       sortable: true,
       wrap: true,
     },
     {
+      name: 'CARGO',
+      selector: (row) => {
+        const cargo = row.empleado?.cargo?.nombre || 'Cargo no disponible';
+        return cargo === 'Cargo no disponible' 
+          ? cargo 
+          : cargo.charAt(0).toUpperCase() + cargo.slice(1).toLowerCase();
+      },
+      sortable: true,
+      wrap: true,
+    },
+    
+    {
       name: 'ACCIONES',
       cell: (row) => {
-        const { estado } = row;  
-    
+        const { estado } = row;
+  
         return (
           <div className="d-flex justify-content-around">
             {estado === 1 ? (
-             
               <>
-                <button className=" btn-editar me-2" onClick={() => handleOpenModalEdit(row.id)}>
+                <button
+                  className=" btn-editar me-2"
+                  onClick={() => handleOpenModalEdit(row.id)}
+                >
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
-                <button className="btn-eliminar">
+                <button
+                  className="btn-eliminar"
+                  onClick={() =>
+                    handleDeleteClick(row.id, row.empleado?.persona?.nombre)
+                  }
+                >
                   <FontAwesomeIcon icon={faTrashCan} />
                 </button>
               </>
             ) : (
-              
-              <button className="btn btn-outline-success">
+              <button
+                className="btn btn-outline-success"
+                onClick={() =>
+                  handleActivarClick(row.id, row.empleado?.persona?.nombre)
+                }
+              >
                 <FontAwesomeIcon icon={faPowerOff} />
               </button>
             )}
@@ -158,10 +271,9 @@ export function UsuariosList({ search, updateList }) {
         );
       },
       ignoreRowClick: true,
-      width: '115px',
-    }
-    
+    },
   ];
+  
 
   return (
     <div>
@@ -172,19 +284,23 @@ export function UsuariosList({ search, updateList }) {
         pagination
         responsive
         dense
-        noTableHead={false}
         fixedHeader
         fixedHeaderScrollHeight="500px"
-       
+        striped={true}
+        //selectableRows={true} //con este se activa un check  porc ada fila selccionble
+        //selectableRowsHighlight={true} //resaltar la fila selecionada
+
+        // onRowClicked={(row) => console.log(row)} para ejecutar cuandos e hace click en cada fila
         paginationComponentOptions={{
           rowsPerPageText: 'Filas por página:',
           rangeSeparatorText: 'de',
           selectAllRowsItem: true,
           selectAllRowsItemText: 'Todos',
         }}
+        
       />
 
-      <ToastContainer />
+     
       {/* // modal para editar un usuario */}
       <Modal show={isModalOpen} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
@@ -195,6 +311,23 @@ export function UsuariosList({ search, updateList }) {
           <UsuarioEditar handleCloseModal={handleCloseModal} idUsuario={idUsuario} onUsuarioUpdated={handleUsuarioUpdated} />
         </Modal.Body>
       </Modal>
+
+        {/* MODAL PARA ELIMINAR USUARIO */}
+      <ModalAlertQuestion
+        show={showConfirm}
+        userId={userIdToDelete}
+        nombre={nombreToDelete}
+        handleEliminar={handleEliminar}
+        handleCloseModal={handleCloseModalQuestionEliminar}
+      />
+      <ModalAlertActivar
+        show={showConfirmTrue}
+        userId={userIdActive}
+        nombre={nombreToActive}
+        handleActivarUser={handleActivarUser}
+        handleCloseModal={handleCloseModalQuestionActivar}
+      />
+
       </div>
   );
 }

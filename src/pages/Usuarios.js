@@ -1,15 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UsuariosList } from '../components/componenteUsuario/UsuarioList';
 import { UsuarioForm } from '../components/componenteUsuario/UsuarioForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUserCheck, faUsers, faWarehouse } from '@fortawesome/free-solid-svg-icons';
 import { Modal, Button } from 'react-bootstrap';  // Importamos el Modal de React-Bootstrap
 import { ToastContainer } from 'react-toastify';
+import axios from 'axios';
 
 export function Usuarios() {
   const [showModal, setShowModal] = useState(false);
   const [updateList, setUpdateList] = useState(false);
   const [search, setSearch] = useState('');
+
+  const [estadisticas, setEstadisticas] = useState({
+      totalUsuarios: 0,
+      usuariosActivos: 0,
+      usuariosAlmacen: 0,
+  });
+  useEffect(() => {
+      // Llamada a la API con axios
+      const obtenerEstadisticas = async () => {
+          try {
+              const { data } = await axios.get('http://erp-api.test/api/usuarios/estadisticas');
+              setEstadisticas(data);
+          } catch (error) {
+              console.error('Error al obtener las estadísticas:', error);
+          }
+      };
+
+      obtenerEstadisticas();
+  }, []);
 
   // Función para abrir el modal
   const handleOpenModal = () => setShowModal(true);
@@ -22,11 +42,42 @@ export function Usuarios() {
 
   return (
     <div className='row m-4'>
-      <div className='col-md-12'>
+      {/* Tarjetas de estadísticas */}
+      <div className="col-md-4">
+        <div className="card text-center stats-card">
+          <div className="card-body">
+            <FontAwesomeIcon icon={faUsers} className="icon mb-2" size="2x" />
+            <h6 className="card-title mt-2">Total de Usuarios</h6>
+            <p className="card-text mx-2">{estadisticas.totalUsuarios}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="col-md-4">
+        <div className="card text-center stats-card">
+          <div className="card-body">
+            <FontAwesomeIcon icon={faUserCheck} className="icon mb-2" size="2x" />
+            <h6 className="card-title mt-2">Usuarios Activos</h6>
+            <p className="card-text mx-2">{estadisticas.usuariosActivos}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="col-md-4">
+        <div className="card text-center stats-card">
+          <div className="card-body">
+            <FontAwesomeIcon icon={faWarehouse} className="icon mb-2" size="2x" />
+            <h6 className="card-title mt-2">Cargo: Almacén</h6>
+            <p className="card-text mx-2">{estadisticas.usuariosAlmacen}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className='col-md-12 mt-4'>
         <div className='card border-0'>
           <div className="card-header d-flex justify-content-between align-items-center">
             <div className="m-2">
-              <h4 className="card-title mb-0">Lista de Usuarios</h4>
+              <h4 className="card-title mb-0 titulo-card-especial">Lista de Usuarios</h4>
             </div>
 
             <div className="d-flex align-items-center">
@@ -40,7 +91,7 @@ export function Usuarios() {
               
             </div>
           </div>
-          <div className='card-body'>
+          <div className='card-body cuerpo-tabla p-0' >
             <UsuariosList search={search} updateList={updateList} />
           </div>
         </div>
@@ -57,7 +108,7 @@ export function Usuarios() {
         </Modal.Body>
       </Modal>
       
-      <ToastContainer />
+    
     </div>
   );
 }
