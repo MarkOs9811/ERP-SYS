@@ -28,11 +28,10 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
     const fetchData = async (usuarioId) => {
         setLoading(true);
         setError("");
-
         try {
             // Obtener datos del usuario
             const userResponse = await axios.get(`http://erp-api.test/api/getUsuarioById/${usuarioId}`);
-            console.log("Respuesta del usuario:", userResponse.data);
+            
             if (userResponse.data) {
                 const usuario = userResponse.data;
                 const empleado = usuario.empleado;

@@ -37,36 +37,36 @@ export function SideBar({ isCompressed }) {
 
       {/* Lista de menús */}
       <ul className="menu-list">
-        <li className={`menu-item my-2 ${location.pathname === "/" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
-          <Link to="/">
-            <FontAwesomeIcon icon={faHome} className="icon" />
-            {!isCompressed && <span>Inicio</span>}
+          <Link to="/" className='link-opcion'>
+            <li className={`menu-item my-2 ${location.pathname === "/" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
+                <FontAwesomeIcon icon={faHome} className="icon" />
+                {!isCompressed && <span>Inicio</span>}
+            </li>
           </Link>
-        </li>
-        <li className={`menu-item my-2 ${location.pathname === "/usuarios" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
-          <Link to="/usuarios">
-            <FontAwesomeIcon icon={faUsers} className="icon" />
-            {!isCompressed && <span>Usuarios</span>}
+          <Link to="/usuarios" className='link-opcion'>
+            <li className={`menu-item my-2 ${location.pathname === "/usuarios" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
+                <FontAwesomeIcon icon={faUsers} className="icon" />
+                {!isCompressed && <span>Usuarios</span>}
+            </li>
           </Link>
-        </li>
-        <li className={`menu-item my-2 ${location.pathname === "/almacen" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
-          <Link to="/almacen">
-            <FontAwesomeIcon icon={faBox} className="icon" />
-            {!isCompressed && <span>Almacén</span>}
+          <Link to="/almacen" className='link-opcion'>
+            <li className={`menu-item my-2 ${location.pathname === "/almacen" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
+                <FontAwesomeIcon icon={faBox} className="icon" />
+                {!isCompressed && <span>Almacén</span>}
+            </li>
           </Link>
-        </li>
-        <li className={`menu-item my-2 ${location.pathname === "/configuracion" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
-          <Link to="/configuracion">
-            <FontAwesomeIcon icon={faCogs} className="icon" />
-            {!isCompressed && <span>Configuración</span>}
+          <Link to="/configuracion" className='link-opcion'>
+            <li className={`menu-item my-2 ${location.pathname === "/configuracion" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
+                <FontAwesomeIcon icon={faCogs} className="icon" />
+                {!isCompressed && <span>Configuración</span>}
+            </li>
           </Link>
-        </li>
-        <li className={`menu-item my-2 ${location.pathname === "/logout" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
-          <Link onClick={cerrarSession} className="logout-btn">
-            <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
-            {!isCompressed && <span>Salir</span>}
+          <Link onClick={cerrarSession} className="logout-btn link-opcion">
+            <li className={`menu-item my-2 ${location.pathname === "/logout" ? "active" : ""} ${isCompressed ? 'center' : ''}`}>
+                <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
+                {!isCompressed && <span>Salir</span>}
+            </li>
           </Link>
-        </li>
       </ul>
     </div>
   );
