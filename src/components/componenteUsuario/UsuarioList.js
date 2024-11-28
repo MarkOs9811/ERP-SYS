@@ -138,7 +138,7 @@ export function UsuariosList({ search, updateList }) {
     }
   };
 
-   // Handle para eliminar un usuario 
+   // Handle para ACTIVAR un usuario 
    const handleActivarUser = async (userId) => {
     try {
       // Realiza la solicitud POST para cambiar el estado del usuario
@@ -317,6 +317,7 @@ export function UsuariosList({ search, updateList }) {
         show={showConfirm}
         userId={userIdToDelete}
         nombre={nombreToDelete}
+        tipo={'usuario'}
         handleEliminar={handleEliminar}
         handleCloseModal={handleCloseModalQuestionEliminar}
       />
@@ -324,7 +325,7 @@ export function UsuariosList({ search, updateList }) {
         show={showConfirmTrue}
         userId={userIdActive}
         nombre={nombreToActive}
-        handleActivarUser={handleActivarUser}
+        handleActivar={handleActivarUser}
         handleCloseModal={handleCloseModalQuestionActivar}
       />
 

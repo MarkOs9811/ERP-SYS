@@ -2,12 +2,12 @@ import React from 'react';
 import "react-toastify/dist/ReactToastify.css";
 import '../../css/ModalAlertActivar.css'; // Importar CSS correctamente
 
-function ModalAlertActivar({ show, userId,nombre, handleActivarUser, handleCloseModal}) {
+function ModalAlertActivar({ show, userId,nombre, handleActivar, handleCloseModal,tipo}) {
     
     const handleConfirm = async () => {
         try {
             // Ejecutar la función de eliminación pasando el ID
-            const success = await handleActivarUser(userId);
+            const success = await handleActivar(userId);
             if (success) {
                 handleCloseModal(); 
             } else {
@@ -23,7 +23,7 @@ function ModalAlertActivar({ show, userId,nombre, handleActivarUser, handleClose
     show && (
       <div className={`modal-overlay ${show ? 'show' : ''}`}> {/* Agregar clase show */}
         <div className="contenido-model bg-white">
-          <h3>¿Estás seguro de Activar este usuario?</h3>
+          <h3>¿Estás seguro de Activar este {tipo}?</h3>
           <h4 className="modal-name-activar">{nombre || 'Nombre no disponible'}</h4>
           <div>
             <button onClick={handleConfirm} className="btn-activarUsuario mx-2">

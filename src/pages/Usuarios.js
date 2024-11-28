@@ -18,7 +18,7 @@ export function Usuarios() {
       usuariosAlmacen: 0,
   });
   useEffect(() => {
-      // Llamada a la API con axios
+     
       const obtenerEstadisticas = async () => {
           try {
               const { data } = await axios.get('http://erp-api.test/api/usuarios/estadisticas');
@@ -41,7 +41,7 @@ export function Usuarios() {
   };
 
   return (
-    <div className='row m-4'>
+    <div className='row '>
       {/* Tarjetas de estadísticas */}
       <div className="col-md-4">
         <div className="card text-center stats-card">

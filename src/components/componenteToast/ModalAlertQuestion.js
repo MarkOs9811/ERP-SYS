@@ -3,7 +3,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import '../../css/ModalAlertQuestion.css'; // Importar CSS correctamente
 
-function ModalAlertQuestion({ show, userId,nombre, handleEliminar, handleCloseModal}) {
+function ModalAlertQuestion({ show, userId,nombre, handleEliminar, handleCloseModal,tipo}) {
     
     const handleConfirm = async () => {
         try {
@@ -24,7 +24,7 @@ function ModalAlertQuestion({ show, userId,nombre, handleEliminar, handleCloseMo
     show && (
       <div className={`modal-overlay ${show ? 'show' : ''}`}> {/* Agregar clase show */}
         <div className="contenido-model bg-white">
-          <h3>¿Estás seguro de eliminar este usuario?</h3>
+          <h3>¿Estás seguro de eliminar este {tipo}?</h3>
           <h4 className="modal-name-delete">{nombre || 'Nombre no disponible'}</h4>
           <div>
             <button onClick={handleConfirm} className="btn btn-danger  mx-2">
