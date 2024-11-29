@@ -9,11 +9,12 @@ import { Modal } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import ModalAlertQuestion from '../componenteToast/ModalAlertQuestion';
 import ModalAlertActivar from '../componenteToast/ModalAlertActivar';
+import axiosInstance from '../../api/AxiosInstance';
 
 
 // LOS PROPS SON PARAMETROS QUE SE ESTA RECIEBIENDO EN ESTA FUNCTION COMO "SEARCH" Y "UPDATELIST"
 export function UsuariosList({ search, updateList }) {
-
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const [usuarios, setUsuarios] = useState([]);
   const [filteredUsuarios, setFilteredUsuarios] = useState([]);
@@ -33,8 +34,8 @@ export function UsuariosList({ search, updateList }) {
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://erp-api.test/api/usuarios');
-      if (response.data.success) {
+      const response = await axiosInstance.get('/usuarios');
+      if (response.data) {
         setUsuarios(response.data.data);
         setFilteredUsuarios(response.data.data);
       } else {
@@ -173,6 +174,26 @@ export function UsuariosList({ search, updateList }) {
       center: true,
      
     },
+    {
+      name: 'Foto',
+      selector: (row) => row.fotoPerfil || 'No disponible',
+      sortable: true, 
+      wrap: true,
+      center: true,
+      cell: (row) => (
+        <div style={{ textAlign: 'center' }}>
+          {row.fotoPerfil ? (
+            <img 
+              src={`${BASE_URL}/storage/${row.fotoPerfil}`}  // Aquí colocas la URL completa a la imagen (puede ser en 'public')
+              alt="Foto de perfil" 
+              style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Ajusta el tamaño y el estilo
+            />
+          ) : (
+            <span>No disponible</span> // Si no hay foto, muestra este texto
+          )}
+        </div>
+      ),
+    },    
     {
       name: 'USUARIO',
       selector: (row) => row.email || 'No disponible',

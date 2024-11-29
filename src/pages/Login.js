@@ -35,6 +35,8 @@ export const Login = () => {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('roles', JSON.stringify(response.data.roles));
+        localStorage.setItem('fotoPerfil', JSON.stringify(response.data.user.fotoPerfil));
+        console.log(response.data.user.fotoPerfil);
         ToastAlert('success', 'Inicio de sesión exitoso');
         setTimeout(() => {
           navigate('/');
