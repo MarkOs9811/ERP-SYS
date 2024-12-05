@@ -1,25 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-import { Usuarios } from './pages/Usuarios';
+import { PrivateRoute } from './components/PrivateRoute';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
 import { Header } from './components/Header';
 import { SideBar } from './components/SideBar';
-import { Home } from './pages/Home';
+import { Navegacion } from './components/Navegacion';
 import { Login } from './pages/Login';
-import { PrivateRoute } from './components/PrivateRoute'; // Importa la ruta privada
-import { ToastContainer, toast } from 'react-toastify';
-import bootstrap from 'bootstrap/dist/js/bootstrap.bundle';
-import 'react-toastify/dist/ReactToastify.css';
+import { Home } from './pages/Home';
+import { Usuarios } from './pages/Usuarios';
 import { Almacen } from './pages/Almacen';
 import { Configuracion } from './pages/Configuracion';
-import { Navegacion } from './components/Navegacion';
-
+import { AuthProvider, useAuth } from './AuthContext';
+import { Vender } from './pages/Vender';
+import { Platos } from './components/componenteVender/Platos';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  // useEffect para poder actualizar el logo icono y el nombre en el proyecto - pestaña 
+  useEffect(() => {
+    // Obtener datos de la empresa desde localStorage
+    const miEmpresa = JSON.parse(localStorage.getItem("miEmpresa"));
+
+    if (miEmpresa) {
+      // Actualizar el título de la página
+      document.title = miEmpresa.nombre;
+
+      // Actualizar el favicon
+      const favicon = document.getElementById("favicon");
+      const logoUrl = `${BASE_URL}/storage/${miEmpresa.logo}`; // URL del logo dinámico
+      favicon.href = logoUrl;
+    }
+  }, []); 
   useEffect(() => {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     tooltipTriggerList.forEach((tooltipTriggerEl) => {
@@ -27,9 +46,10 @@ function App() {
     });
   }, []);
 
-  
+  const isAuthenticated = !!localStorage.getItem('token'); // Verifica si hay token
+
   return (
-    <div className="App">
+    <AuthProvider>
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -38,25 +58,21 @@ function App() {
             element={
               <PrivateRoute>
                 <div className="main-container">
-
                   <SideBar isCompressed={!sidebarOpen} />
-
                   <div className={`content ${sidebarOpen ? 'open' : ''}`}>
                     <Header onToggleSidebar={toggleSidebar} />
-
-                    {/* CUERPO DE APLICACION */}
                     <div className="container">
-                        <>  <ToastContainer /> 
-                        <Navegacion/>
-                        <Routes>
-                          <Route path="/" element={<Home />} />
-                          <Route path="/usuarios" element={<Usuarios />} />
-                          <Route path="/almacen" element={<Almacen />} />
-                          <Route path="/configuracion" element={<Configuracion />} />
-                        </Routes>
-                        </>
+                      <ToastContainer />
+                      <Navegacion />
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/usuarios" element={<Usuarios />} />
+                        <Route path="/almacen" element={<Almacen />} />
+                        <Route path="/vender" element={<Vender />} />
+                        <Route path="/vender/platos/:id" element={<Platos />} />
+                        <Route path="/configuracion" element={<Configuracion />} />
+                      </Routes>
                     </div>
-                    {/* ======== */}
                   </div>
                 </div>
               </PrivateRoute>
@@ -64,7 +80,7 @@ function App() {
           />
         </Routes>
       </Router>
-    </div>
+    </AuthProvider>
   );
 }
 

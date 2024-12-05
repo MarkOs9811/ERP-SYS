@@ -1,0 +1,25 @@
+/* EstilosPlatos.css */
+.card {
+    border-radius: 8px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  
+  .card-img-top {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .btn-primary {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+  }
+  
+  .btn-primary:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+  }
+  .platosTabla{
+    width: 100%;
+  }
+  

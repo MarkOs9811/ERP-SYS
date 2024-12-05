@@ -1,0 +1,36 @@
+.mesas-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los cards se ajusten a la pantalla */
+    gap: 16px; /* Espaciado entre los cards */
+    justify-content: left; /* Centra los cards horizontalmente */
+    padding: 16px;
+  }
+  
+  .mesa-card {
+    background-color: #f8f9fa; /* Color de fondo suave */
+    border: 1px solid #ddd; /* Borde claro */
+    border-radius: 8px; /* Esquinas redondeadas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para el efecto */
+    padding: 16px;
+    width: 200px; /* Ancho fijo para los cards */
+    text-align: left; /* Centra el contenido dentro del card */
+    transition: transform 0.2s; /* Animación al pasar el mouse */
+  }
+  
+  .mesa-card:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+  }
+  
+  .mesa-numero {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+  }
+  
+  .mesa-card p {
+    margin: 8px 0;
+    font-size: 0.9em;
+    color: #555;
+  }
+  

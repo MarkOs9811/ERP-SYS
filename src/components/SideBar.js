@@ -27,7 +27,15 @@ import axios from 'axios';
 export function SideBar({ isCompressed }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const miEmpresa = JSON.parse(localStorage.getItem('miEmpresa')); // Obtener y convertir JSON a objeto
 
+  const fotoEmpresa = `${BASE_URL}/storage/${miEmpresa.logo}`;
+  if (miEmpresa && miEmpresa.logo) { 
+    console.log(fotoEmpresa); // Salida: BASE_URL/storage/imagenes/logo.png
+  } else {
+    console.error('El objeto miEmpresa no contiene el campo logo o no existe.');
+  }
   // Obtener los roles desde localStorage
   const roles = JSON.parse(localStorage.getItem('roles')) || [];
 
@@ -84,14 +92,29 @@ export function SideBar({ isCompressed }) {
       .replace(/\s+/g, '-') // Reemplaza espacios con guiones
       .replace(/\./g, '-'); // Reemplaza puntos con guiones
   };
+  const capitalizeWords = (string) => {
+    if (!string) return ''; // Si el valor es nulo o vacío
+    return string
+      .toLowerCase() // Convierte todo a minúsculas
+      .split(' ') // Divide la cadena en palabras
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitaliza la primera letra de cada palabra
+      .join(' '); // Une las palabras de nuevo en una cadena
+  };
 
   return (
     <div className={`sidebar ${isCompressed ? 'compressed' : ''}`}>
-      <div className="sidebar-header">
-        <FontAwesomeIcon icon={faHome} className="header-icon" />
-        {!isCompressed && <span className="header-title">Mi Marca</span>}
+      <div className="sidebar-header ">
+        {fotoEmpresa && (
+            <img
+              src={fotoEmpresa}
+              alt="logo empresa"
+              className="img-fluid "
+              style={{ maxWidth: '60px', borderRadius: '50%', marginLeft: '10px' }}
+            />
+        )}
+        {!isCompressed && <span className="header-title">{capitalizeWords(miEmpresa.nombre)}</span>}
       </div>
-
+      <hr className='mx-3 text-secondary'></hr>
       <ul className="menu-list">
         <Link to={`/`} className="link-opcion" key='Inicio'
             data-bs-toggle="tooltip" data-bs-placement="right" title={'Inicio'}>
@@ -110,11 +133,12 @@ export function SideBar({ isCompressed }) {
             title={role.nombre}
           >
             <li
-              className={`menu-item my-2 ${location.pathname === `/${formatRoleToUrl(role.nombre)}` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}
+              className={`menu-item my-2 ${location.pathname.startsWith(`/${formatRoleToUrl(role.nombre)}`) ? 'active' : ''} ${isCompressed ? 'center' : ''}`}
             >
               <FontAwesomeIcon icon={getIconForRole(role.nombre)} className="icon" />
               {!isCompressed && <span>{role.nombre}</span>}
             </li>
+
           </Link>
         ))}
 

@@ -14,7 +14,7 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+ 
   // Inicializamos useForm
   const { register, handleSubmit, formState: { errors }, setValue } = useForm();
 
@@ -36,6 +36,8 @@ export const Login = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('roles', JSON.stringify(response.data.roles));
         localStorage.setItem('fotoPerfil', JSON.stringify(response.data.user.fotoPerfil));
+        localStorage.setItem('miEmpresa', JSON.stringify(response.data.miEmpresa));
+
         console.log(response.data.user.fotoPerfil);
         ToastAlert('success', 'Inicio de sesión exitoso');
         setTimeout(() => {

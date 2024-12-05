@@ -12,12 +12,13 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #0e182c;
-  color: #ecf0f1;
+  /* background-color: #0e182c; */
+  background-color: #ffffff;
+  color: #0e182c;
   overflow-y: auto;
   transition: width 0.3s ease, border-radius 0.3s ease; /* Agregado efecto suave para border-radius */
-  width: 250px; /* Ancho del sidebar abierto */
-  padding-top: 20px; /* Espacio superior */
+  width: 250px; 
+  
 }
 /* DISEÑO PARA E SCROL DEL SIDEBAR */
 /* Estilo para el scrollbar del sidebar */
@@ -26,22 +27,23 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background-color: #5a6e89; /* Color del pulgar del scrollbar */
+  background-color: #dfdfdf; /* Color del pulgar del scrollbar (rojizo suave) */
   border-radius: 10px; /* Redondear el pulgar del scrollbar */
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background-color: #718ba4; /* Color del pulgar al pasar el mouse */
+  background-color: #a7a7a7; /* Color del pulgar al pasar el mouse (más intenso) */
 }
 
 .sidebar::-webkit-scrollbar-track {
-  background-color: #0e182c; /* Fondo del track */
+  background-color: #fff4f4; /* Fondo del track (tono claro para complementar) */
   border-radius: 10px;
 }
 
 .sidebar::-webkit-scrollbar-track:hover {
-  background-color: #1b2b47; /* Fondo del track al pasar el mouse */
+  background-color: #f8dada; /* Fondo del track al pasar el mouse (más cálido) */
 }
+
 /* ================================================================= */
 /* Sidebar comprimido */
 .sidebar.compressed {
@@ -111,7 +113,7 @@
 .menu-item .icon {
   font-size: 18px;
   flex-shrink: 0; /* Evita que el ícono se reduzca */
-  color: #ecf0f1;
+  color: #2d374d;
   transition: transform 0.3s ease; /* Suaviza cambios de tamaño */
 }
 /* Íconos */
@@ -123,7 +125,7 @@
 .menu-item span {
   flex-grow: 1; /* Permite al texto ocupar espacio restante */
   text-align: left;
-  color: #ecf0f1;
+  color: #2d374d;
   visibility: visible;
   opacity: 1;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -137,13 +139,20 @@
 
 /* Estilo para la opción activa */
 .menu-item.active {
-  background: rgb(27,146,254);
-  background: linear-gradient(150deg, rgba(27,146,254,1) 0%, rgb(18, 85, 173) 96%);
-  color: #ffffff; /* Texto blanco */
+  background: white;
+  color: #ffffff!important; /* Texto blanco */
+  border-left: 4px solid #007be0;
+  border-radius: 0px;
 }
-
+.menu-item.active span{
+  color: #007be0!important;
+  font-weight: bold;
+}
+.menu-item.active .icon{
+  color: #007be0!important;
+}
 /* Ajustes para el enlace dentro de la opción activa */
-.menu-item.active a {
+.menu-item.active a{
   color: #ffffff;
   font-weight: bold; /* Resalta el texto */
  
@@ -156,13 +165,13 @@
 
 /* Efecto hover para elementos no activos */
 .menu-item:hover:not(.active) {
-  background-color: #354c69; /* Fondo azul oscuro */
+  background-color: #bbbbbb; /* Fondo azul oscuro */
 }
 
 /* Cabecera del Sidebar */
 .sidebar-header {
-  background-color: transparent; /* Fondo transparente */
-  color: #ffffff; /* Texto blanco */
+  background-color: #ffffff;
+  color: #2a2f30; /* Texto blanco */
   display: flex;
   align-items: center;
   justify-content: center; /* Centrado horizontal */
