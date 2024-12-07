@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTooltips } from '../hooks/UseToolTips';
 import {
   faSignOutAlt,
   faHome,
@@ -14,32 +15,21 @@ import {
   faHouseChimney,
   faBullhorn,
   faGear,
+  faPlateWheat,
   faTruckFast,
-} from '@fortawesome/free-solid-svg-icons'; // Sólidos
-import {
-  faAddressCard,
-  faIdBadge,
-  faCalendarAlt,
-} from '@fortawesome/free-regular-svg-icons'; // Regulares
+} from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard, faIdBadge, faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 
-import axios from 'axios';
+import axiosInstance from '../api/AxiosInstance';
 
 export function SideBar({ isCompressed }) {
   const location = useLocation();
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const miEmpresa = JSON.parse(localStorage.getItem('miEmpresa')); // Obtener y convertir JSON a objeto
-
-  const fotoEmpresa = `${BASE_URL}/storage/${miEmpresa.logo}`;
-  if (miEmpresa && miEmpresa.logo) { 
-    console.log(fotoEmpresa); // Salida: BASE_URL/storage/imagenes/logo.png
-  } else {
-    console.error('El objeto miEmpresa no contiene el campo logo o no existe.');
-  }
-  // Obtener los roles desde localStorage
+  const miEmpresa = JSON.parse(localStorage.getItem('miEmpresa')) || {};
+  const fotoEmpresa = miEmpresa.logo ? `${BASE_URL}/storage/${miEmpresa.logo}` : null;
   const roles = JSON.parse(localStorage.getItem('roles')) || [];
 
-  // Íconos asociados a cada vista
   const icons = {
     inicio: faHome,
     usuarios: faUsers,
@@ -50,32 +40,27 @@ export function SideBar({ isCompressed }) {
     vender: faStore,
     proveedores: faTruckFast,
     compras: faCalendarAlt,
-    'rr-hh': faIdBadge, // Adaptado para "RR.HH"
+    platos: faPlateWheat,
+    'rr-hh': faIdBadge,
     finanzas: faArrowTrendUp,
-    'areas-y-cargos': faBuilding, // Adaptado para "areas y cargos"
+    'areas-y-cargos': faBuilding,
     configuracion: faCogs,
   };
 
-  // Función para obtener el ícono asociado a un rol
   const getIconForRole = (roleName) => {
     const roleKey = roleName
       .toLowerCase()
-      .replace(/\s+/g, '-') // Reemplaza espacios por guiones
-      .replace(/\./g, '-')  // Reemplaza puntos por guiones
+      .replace(/\s+/g, '-')
+      .replace(/\./g, '-')
       .trim();
-      
-    return icons[roleKey] || faHome; // Devuelve el ícono o uno por defecto
+    return icons[roleKey] || faHome;
   };
 
-  // Función para cerrar sesión
   const cerrarSession = async () => {
     try {
-      await axios.post('http://erp-api.test/api/logout', {}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
+      await axiosInstance.post('/logout', {}, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
-
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       localStorage.removeItem('roles');
@@ -85,39 +70,38 @@ export function SideBar({ isCompressed }) {
     }
   };
 
-  // Función para convertir nombres de roles a URLs amigables
   const formatRoleToUrl = (roleName) => {
     return roleName
       .toLowerCase()
-      .replace(/\s+/g, '-') // Reemplaza espacios con guiones
-      .replace(/\./g, '-'); // Reemplaza puntos con guiones
+      .replace(/\s+/g, '-')
+      .replace(/\./g, '-');
   };
+
   const capitalizeWords = (string) => {
-    if (!string) return ''; // Si el valor es nulo o vacío
     return string
-      .toLowerCase() // Convierte todo a minúsculas
-      .split(' ') // Divide la cadena en palabras
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitaliza la primera letra de cada palabra
-      .join(' '); // Une las palabras de nuevo en una cadena
+      ? string.toLowerCase().split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+      : '';
   };
+
+  // Llama al hook para inicializar los tooltips
+  useTooltips(roles);
 
   return (
     <div className={`sidebar ${isCompressed ? 'compressed' : ''}`}>
-      <div className="sidebar-header ">
+      <div className="sidebar-header">
         {fotoEmpresa && (
-            <img
-              src={fotoEmpresa}
-              alt="logo empresa"
-              className="img-fluid "
-              style={{ maxWidth: '60px', borderRadius: '50%', marginLeft: '10px' }}
-            />
+          <img
+            src={fotoEmpresa}
+            alt="logo empresa"
+            className="img-fluid"
+            style={{ maxWidth: '60px', borderRadius: '50%', marginLeft: '10px' }}
+          />
         )}
         {!isCompressed && <span className="header-title">{capitalizeWords(miEmpresa.nombre)}</span>}
       </div>
-      <hr className='mx-3 text-secondary'></hr>
+      <hr className="mx-3 text-secondary" />
       <ul className="menu-list">
-        <Link to={`/`} className="link-opcion" key='Inicio'
-            data-bs-toggle="tooltip" data-bs-placement="right" title={'Inicio'}>
+        <Link to={`/`} className="link-opcion" key="Inicio" data-bs-toggle="tooltip" data-bs-placement="right" title="Inicio">
           <li className={`menu-item my-2 ${location.pathname === `/` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
             <FontAwesomeIcon icon={faHouseChimney} className="icon" />
             {!isCompressed && <span>Inicio</span>}
@@ -133,25 +117,24 @@ export function SideBar({ isCompressed }) {
             title={role.nombre}
           >
             <li
-              className={`menu-item my-2 ${location.pathname.startsWith(`/${formatRoleToUrl(role.nombre)}`) ? 'active' : ''} ${isCompressed ? 'center' : ''}`}
+              className={`menu-item my-2 ${
+                location.pathname.startsWith(`/${formatRoleToUrl(role.nombre)}`) ? 'active' : ''
+              } ${isCompressed ? 'center' : ''}`}
             >
               <FontAwesomeIcon icon={getIconForRole(role.nombre)} className="icon" />
               {!isCompressed && <span>{role.nombre}</span>}
             </li>
-
           </Link>
         ))}
-
-        {/* Contenedor para las opciones de configuración y salir */}
         <div className="menu-footer d-flex flex-column mt-auto">
           <Link to={'/configuracion'} className="link-opcion">
             <li className={`menu-item ${location.pathname === `/configuracion` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
               <FontAwesomeIcon icon={faGear} className="icon" />
-              {!isCompressed && <span>Configuracion</span>}
+              {!isCompressed && <span>Configuración</span>}
             </li>
           </Link>
           <Link onClick={cerrarSession} className="logout-btn link-opcion">
-            <li className={`menu-item  ${isCompressed ? 'center' : ''}`}>
+            <li className={`menu-item ${isCompressed ? 'center' : ''}`}>
               <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
               {!isCompressed && <span>Salir</span>}
             </li>
@@ -159,6 +142,5 @@ export function SideBar({ isCompressed }) {
         </div>
       </ul>
     </div>
-
   );
 }

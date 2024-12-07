@@ -247,8 +247,14 @@
   font-size: 1.25rem;
 }
 
-.card {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.card-platos{
+  transition: all ease-out 0.2s;
+}
+.card-platos:active{
+  transform: scale(1.1,1.1);
+}
+
+.card{
   border-radius: 10px !important; /* Redondeo */
   transition: box-shadow 0.3s ease-in-out; /* Efecto suave */
   border: none!important;
@@ -397,8 +403,42 @@
     transition: background-color 0.3s ease;
 }
 .btn-guardar:hover{
-  background-color: #024f8f;
+  background-color: #104e81;
   color: #c9d6f0;
+}
+
+.btn-cerrar-modal{
+  min-width: 35px;
+  width:100px;
+  height: 50px;
+  line-height: 15px;
+  background-color: #393f44;
+  color: #e2ecff;
+  border:none;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+.btn-cerrar-modal:hover{
+background-color: #202427;
+color: #c9d6f0;
+}
+
+.btn {
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px; /* Esquinas redondeadas */
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Transiciones suaves */
+}
+
+
+/* Estado active */
+.btn:active {
+  background-color: #004080; /* Color más oscuro al hacer clic */
+  transform: scale(0.95); /* Reduce ligeramente el tamaño en el clic */
 }
 /* ========== Responsivo ========== */
 @media (max-width: 768px) {

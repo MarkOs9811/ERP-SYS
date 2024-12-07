@@ -1,13 +1,14 @@
 import { faEdit, faPlus, faPowerOff, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { react, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import ModalAlertQuestion from "../componenteToast/ModalAlertQuestion";
 import { toast } from "react-toastify";
 import ModalAlertActivar from "../componenteToast/ModalAlertActivar";
 import { Modal } from "react-bootstrap";
 import { AlmacenStockAdd } from "./AlmacenStockAdd";
+import axiosInstance from "../../api/AxiosInstance";
 
 
 export function AlmacenList({search,updateList}){
@@ -31,7 +32,7 @@ export function AlmacenList({search,updateList}){
     const fetchAlmacen = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://erp-api.test/api/almacen');
+            const response = await axiosInstance.get('/almacen');
             if (response.data.success) {
                 setAlmacen(response.data.data);
                 setFilteredAlmacen(response.data.data);
@@ -154,7 +155,6 @@ export function AlmacenList({search,updateList}){
 
     // enviando ID PARA AGREGAR STOCK
     const handleAddStockModal =  (data) =>{
-        console.log(data); // Verifica el contenido de 'data'
         setIsModalOpen(true);
         setProductoEdit(data);
     }
@@ -300,7 +300,7 @@ export function AlmacenList({search,updateList}){
 
             <ModalAlertQuestion
                 show={showConfirm}
-                userId={activoIdDelete}
+                idEliminar={activoIdDelete}
                 nombre={nombreActivoToDelete}
                 tipo={'producto'}
                 handleEliminar={handleEliminarProductoSi}
@@ -309,7 +309,7 @@ export function AlmacenList({search,updateList}){
 
             <ModalAlertActivar
                 show={showConfirmTrue}
-                userId={productoIdActivar}
+                idActivar={productoIdActivar}
                 nombre={nombreActivoToActive}
                 tipo='producto'
                 handleActivar={handleActivarProductoSi}

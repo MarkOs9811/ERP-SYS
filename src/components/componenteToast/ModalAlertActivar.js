@@ -2,12 +2,12 @@ import React from 'react';
 import "react-toastify/dist/ReactToastify.css";
 import '../../css/ModalAlertActivar.css'; // Importar CSS correctamente
 
-function ModalAlertActivar({ show, userId,nombre, handleActivar, handleCloseModal,tipo}) {
+function ModalAlertActivar({ show, idActivar,nombre, handleActivar, handleCloseModal,tipo}) {
     
     const handleConfirm = async () => {
         try {
             // Ejecutar la función de eliminación pasando el ID
-            const success = await handleActivar(userId);
+            const success = await handleActivar(idActivar);
             if (success) {
                 handleCloseModal(); 
             } else {

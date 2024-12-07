@@ -2,9 +2,6 @@ import axios from 'axios';
 
 const axiosInstance = axios.create({
   baseURL: 'http://erp-api.test/api', // URL base para tus endpoints
-  headers: {
-    'Content-Type': 'multipart/form-data',
-  },
   withCredentials: true, // Incluye cookies si tu API las usa
 });
 
@@ -15,6 +12,14 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`; // Añade el token al header
     }
+
+    // Ajusta el Content-Type según sea necesario
+    if (config.data && config.data instanceof FormData) {
+      config.headers['Content-Type'] = 'multipart/form-data';
+    } else {
+      config.headers['Content-Type'] = 'application/json';
+    }
+
     return config;
   },
   (error) => {

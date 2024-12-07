@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
+
 import { PrivateRoute } from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,12 +11,14 @@ import { SideBar } from './components/SideBar';
 import { Navegacion } from './components/Navegacion';
 import { Login } from './pages/Login';
 import { Home } from './pages/Home';
+import { MenuPlato } from './pages/MenuPlato';
 import { Usuarios } from './pages/Usuarios';
 import { Almacen } from './pages/Almacen';
 import { Configuracion } from './pages/Configuracion';
 import { AuthProvider, useAuth } from './AuthContext';
 import { Vender } from './pages/Vender';
 import { Platos } from './components/componenteVender/Platos';
+
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -39,12 +42,9 @@ function App() {
       favicon.href = logoUrl;
     }
   }, []); 
-  useEffect(() => {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach((tooltipTriggerEl) => {
-      new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-  }, []);
+  
+  
+  
 
   const isAuthenticated = !!localStorage.getItem('token'); // Verifica si hay token
 
@@ -71,6 +71,7 @@ function App() {
                         <Route path="/vender" element={<Vender />} />
                         <Route path="/vender/platos/:id" element={<Platos />} />
                         <Route path="/configuracion" element={<Configuracion />} />
+                        <Route path="/platos" element={<MenuPlato />} />
                       </Routes>
                     </div>
                   </div>

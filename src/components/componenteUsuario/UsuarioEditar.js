@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import {  faSave } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ToastAlert from "../componenteToast/ToastAlert";
+import axiosInstance from "../../api/AxiosInstance";
 
 export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated }) {
     const [formData, setFormData] = useState({
@@ -30,7 +31,7 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
         setError("");
         try {
             // Obtener datos del usuario
-            const userResponse = await axios.get(`http://erp-api.test/api/getUsuarioById/${usuarioId}`);
+            const userResponse = await axiosInstance.get(`/getUsuarioById/${usuarioId}`);
             
             if (userResponse.data) {
                 const usuario = userResponse.data;
@@ -66,15 +67,15 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
     const cargasCargosAreasHorarios = async () => {
         try {
             // Cargar los cargos
-            const cargosResponse = await axios.get('http://erp-api.test/api/cargos');
+            const cargosResponse = await axiosInstance.get('/cargos');
             setCargos(cargosResponse.data);
 
             // Cargar las áreas
-            const areasResponse = await axios.get('http://erp-api.test/api/areas');
+            const areasResponse = await axiosInstance.get('/areas');
             setAreas(areasResponse.data);
 
             // Cargar los horarios
-            const horariosResponse = await axios.get('http://erp-api.test/api/horarios');
+            const horariosResponse = await axiosInstance.get('/horarios');
             setHorarios(horariosResponse.data);
 
         } catch (err) {
@@ -100,7 +101,7 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
         const selectedCargoId = e.target.value;
         if (selectedCargoId) {
             try {
-                const response = await axios.get(`http://erp-api.test/api/getSalarioCargo/${selectedCargoId}`);
+                const response = await axiosInstance.get(`/getSalarioCargo/${selectedCargoId}`);
                 setFormData({ ...formData, cargo: selectedCargoId, salario: response.data.salario || "" });
             } catch (error) {
                 console.error("Error al obtener el salario:", error);
@@ -115,7 +116,7 @@ export function UsuarioEditar({ handleCloseModal, idUsuario, onUsuarioUpdated })
         setError("");
     
         try {
-            const response = await axios.put(`http://erp-api.test/api/updateUsuario/${idUsuario}`, formData);
+            const response = await axiosInstance.put(`/updateUsuario/${idUsuario}`, formData);
             if (response.data.success) {
                 ToastAlert("success", "Usuario actualizado con éxito");
     

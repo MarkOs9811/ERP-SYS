@@ -121,7 +121,7 @@ export function UsuariosList({ search, updateList }) {
   const handleEliminar = async (userId) => {
     try {
       // Realiza la solicitud POST para cambiar el estado del usuario
-      const response = await axios.post(`http://erp-api.test/api/usuarios/eliminar/${userId}`);
+      const response = await axiosInstance.post(`/usuarios/eliminar/${userId}`);
       
       if (response.data.success) {
         toast.success("Usuario eliminado correctamente");
@@ -143,7 +143,7 @@ export function UsuariosList({ search, updateList }) {
    const handleActivarUser = async (userId) => {
     try {
       // Realiza la solicitud POST para cambiar el estado del usuario
-      const response = await axios.post(`http://erp-api.test/api/usuarios/activar/${userId}`);
+      const response = await axiosInstance.post(`/usuarios/activar/${userId}`);
       
       if (response.data.success) {
         toast.success("Usuario activado correctamente");
@@ -336,7 +336,7 @@ export function UsuariosList({ search, updateList }) {
         {/* MODAL PARA ELIMINAR USUARIO */}
       <ModalAlertQuestion
         show={showConfirm}
-        userId={userIdToDelete}
+        idEliminar={userIdToDelete}
         nombre={nombreToDelete}
         tipo={'usuario'}
         handleEliminar={handleEliminar}
@@ -344,7 +344,7 @@ export function UsuariosList({ search, updateList }) {
       />
       <ModalAlertActivar
         show={showConfirmTrue}
-        userId={userIdActive}
+        idActivar={userIdActive}
         nombre={nombreToActive}
         handleActivar={handleActivarUser}
         handleCloseModal={handleCloseModalQuestionActivar}

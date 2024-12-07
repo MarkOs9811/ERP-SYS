@@ -3,12 +3,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import '../../css/ModalAlertQuestion.css'; // Importar CSS correctamente
 
-function ModalAlertQuestion({ show, userId,nombre, handleEliminar, handleCloseModal,tipo}) {
+function ModalAlertQuestion({ show, idEliminar,nombre, handleEliminar, handleCloseModal,tipo}) {
     
     const handleConfirm = async () => {
         try {
             // Ejecutar la función de eliminación pasando el ID
-            const success = await handleEliminar(userId);
+            const success = await handleEliminar(idEliminar);
             if (success) {
                 handleCloseModal(); 
             } else {
