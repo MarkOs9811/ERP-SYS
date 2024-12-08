@@ -61,9 +61,9 @@ function App() {
                   <SideBar isCompressed={!sidebarOpen} />
                   <div className={`content ${sidebarOpen ? 'open' : ''}`}>
                     <Header onToggleSidebar={toggleSidebar} />
-                    <div className="container">
-                      <ToastContainer />
                       <Navegacion />
+                    <div className="container-fluid pt-3">
+                      <ToastContainer />
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/usuarios" element={<Usuarios />} />

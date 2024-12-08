@@ -11,7 +11,7 @@ export function Header({ onToggleSidebar }) {
   const user = JSON.parse(localStorage.getItem('user'));
 
   return (
-    <header className="navbar text-dark bg-white">
+    <header className="navbar text-dark bg-white border-bottom">
     <nav className="container-fluid d-flex align-items-center justify-content-between">
         {/* Botón de compresión de sidebar */}
         <button className="btn  me-3" onClick={onToggleSidebar}>

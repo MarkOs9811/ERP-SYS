@@ -95,7 +95,7 @@ export function Platos() {
   return (
     
       <div className="row  vh-auto">
-        <div className="col-md-12 mb-3">
+        <div className="col-md-12 mb-2">
         <div className="card  shadow-sm p-3">
             <div className="d-flex align-items-center justify-content-between">
                 {/* Botón de volver */}

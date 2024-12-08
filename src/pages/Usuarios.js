@@ -74,7 +74,7 @@ export function Usuarios() {
       </div>
 
       <div className='col-md-12 mt-4'>
-        <div className='card border-0'>
+        <div className='card border-0 shadow-sm'>
           <div className="card-header d-flex justify-content-between align-items-center">
             <div className="m-2">
               <h4 className="card-title mb-0 titulo-card-especial">Lista de Usuarios</h4>

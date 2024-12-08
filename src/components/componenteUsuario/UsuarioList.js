@@ -39,7 +39,7 @@ export function UsuariosList({ search, updateList }) {
         setUsuarios(response.data.data);
         setFilteredUsuarios(response.data.data);
       } else {
-        setError('No se pudo obtener los usuarios');
+        setError(response.data.message);
       }
     } catch (err) {
       setError('Hubo un error al cargar los datos');

@@ -21,7 +21,6 @@ import {
 import { faAddressCard, faIdBadge, faCalendarAlt } from '@fortawesome/free-regular-svg-icons';
 
 import axiosInstance from '../api/AxiosInstance';
-
 export function SideBar({ isCompressed }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -46,6 +45,20 @@ export function SideBar({ isCompressed }) {
     'areas-y-cargos': faBuilding,
     configuracion: faCogs,
   };
+
+  const customOrder = [
+    'ventas',
+    'platos',
+    'vender',
+    'almacen',
+    'proveedores',
+    'compras',
+    'usuarios',
+    'finanzas',
+    'rr-hh',
+    'areas-y-cargos',
+    'configuracion',
+  ];
 
   const getIconForRole = (roleName) => {
     const roleKey = roleName
@@ -83,8 +96,11 @@ export function SideBar({ isCompressed }) {
       : '';
   };
 
-  // Llama al hook para inicializar los tooltips
-  useTooltips(roles);
+  const orderedRoles = roles.sort((a, b) => {
+    const indexA = customOrder.indexOf(a.nombre.toLowerCase());
+    const indexB = customOrder.indexOf(b.nombre.toLowerCase());
+    return (indexA !== -1 ? indexA : Infinity) - (indexB !== -1 ? indexB : Infinity);
+  });
 
   return (
     <div className={`sidebar ${isCompressed ? 'compressed' : ''}`}>
@@ -107,25 +123,86 @@ export function SideBar({ isCompressed }) {
             {!isCompressed && <span>Inicio</span>}
           </li>
         </Link>
-        {roles.map((role) => (
-          <Link
-            to={`/${formatRoleToUrl(role.nombre)}`}
-            key={role.id}
-            className="link-opcion"
-            data-bs-toggle="tooltip"
-            data-bs-placement="right"
-            title={role.nombre}
-          >
-            <li
-              className={`menu-item my-2 ${
-                location.pathname.startsWith(`/${formatRoleToUrl(role.nombre)}`) ? 'active' : ''
-              } ${isCompressed ? 'center' : ''}`}
-            >
-              <FontAwesomeIcon icon={getIconForRole(role.nombre)} className="icon" />
-              {!isCompressed && <span>{role.nombre}</span>}
-            </li>
-          </Link>
-        ))}
+        <div className="accordion border-0 rounded-none" id="main-accordion">
+          {orderedRoles.map((role) => {
+            const roleUrl = formatRoleToUrl(role.nombre);
+            const isActive = location.pathname.startsWith(`/${roleUrl}`);
+            const icon = getIconForRole(role.nombre);
+            const uniqueId = role.nombre.replace(/\s+/g, '-').toLowerCase(); // Identificador único para acordeón
+
+            if (['rr.hh', 'finanzas'].includes(role.nombre.toLowerCase())) {
+              return (
+                <div className="accordion-item border-0 rounded-none" key={role.id}>
+                  <h2 className="accordion-header" id={`${uniqueId}-heading`}>
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target={`#${uniqueId}-collapse`}
+                      aria-expanded="false"
+                      aria-controls={`${uniqueId}-collapse`}
+                    >
+                      <FontAwesomeIcon icon={icon} className="icon" />
+                      {!isCompressed && <span className="ms-2">{role.nombre}</span>}
+                    </button>
+                  </h2>
+                  <div
+                    id={`${uniqueId}-collapse`}
+                    className="accordion-collapse collapse"
+                    aria-labelledby={`${uniqueId}-heading`}
+                    data-bs-parent="#main-accordion"
+                  >
+                    <div className="accordion-body p-0">
+                      <ul className="submenu-list">
+                        {role.nombre.toLowerCase() === 'rr.hh' && (
+                          <>
+                          <li className="submenu-item"><Link to="/planilla">Planilla</Link></li>
+                          <li className="submenu-item"><Link to="/ingreso-a-planilla">Ingreso a Planilla</Link></li>
+                          <li className="submenu-item"><Link to="/asistencia">Asistencia</Link></li>
+                          <li className="submenu-item"><Link to="/horas-extras">Horas Extras</Link></li>
+                          <li className="submenu-item"><Link to="/adelanto-sueldo">Adelanto de Sueldo</Link></li>
+                          <li className="submenu-item"><Link to="/vacaciones">Vacaciones</Link></li>
+                          <li className="submenu-item"><Link to="/reportes">Reportes</Link></li>
+                          <li className="submenu-item"><Link to="/ajustes">Ajustes</Link></li>
+                          </>
+                        )}
+                        {role.nombre.toLowerCase() === 'finanzas' && (
+                          <>
+                            <li className="submenu-item"><Link to="/informes-financieros">Informes Financieros</Link></li>
+                            <li className="submenu-item"><Link to="/libro-diario">Libro Diario</Link></li>
+                            <li className="submenu-item"><Link to="/libro-mayor">Libro Mayor</Link></li>
+                            <li className="submenu-item"><Link to="/cuentas-por-cobrar">Cuentas por Cobrar</Link></li>
+                            <li className="submenu-item"><Link to="/cuentas-por-pagar">Cuentas por Pagar</Link></li>
+                            <li className="submenu-item"><Link to="/presupuestacion">Presupuestación</Link></li>
+                            <li className="submenu-item"><Link to="/firmar-solicitud">Firmar Solicitud</Link></li>
+                            <li className="submenu-item"><Link to="/ajustes">Ajustes</Link></li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                to={`/${roleUrl}`}
+                key={role.id}
+                className="link-opcion"
+                data-bs-toggle="tooltip"
+                data-bs-placement="right"
+                title={role.nombre}
+              >
+                <li className={`menu-item my-2 ${isActive ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                  <FontAwesomeIcon icon={icon} className="icon" />
+                  {!isCompressed && <span>{role.nombre}</span>}
+                </li>
+              </Link>
+            );
+          })}
+        </div>
+
         <div className="menu-footer d-flex flex-column mt-auto">
           <Link to={'/configuracion'} className="link-opcion">
             <li className={`menu-item ${location.pathname === `/configuracion` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
