@@ -6,6 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faEdit, faPlus, faPowerOff, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import customDataTableStyles from "../../css/estilosComponentesTable/DataTableStyles";
+import { Modal } from "react-bootstrap";
+import { ProveedorEdit } from "./ProveedorEdit";
+import ModalAlertQuestion from "../componenteToast/ModalAlertQuestion";
+import ModalAlertActivar from "../componenteToast/ModalAlertActivar";
 
 export function ProveedorList({ search, updateList }) {
     const [proveedores, setProveedores] = useState([]);
@@ -59,7 +63,102 @@ export function ProveedorList({ search, updateList }) {
     // Llamar función para obtener proveedores al montar el componente
     useEffect(() => {
         getProveedores();
-    }, []);
+    }, [updateList]);
+
+    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [dataProvee, setDataProvee] = useState(false);
+
+    const handleOpenModalEdit = (data) => {
+        setDataProvee(data);
+        setIsModalOpen(true);
+    }
+
+    const handleCloseEditarProve = () => {
+        setDataProvee(null);
+        setIsModalOpen(false);
+    }
+    const handleProveedorUpdated = () => {
+        getProveedores();
+      }; 
+
+    // FUNCIONES PARA ELIMINAR Y ACTIVAR 
+    const [modalDelete,setModalDelete] = useState(false); 
+    const [showConfirmActivar,setShowConfirmActivar] = useState(false); 
+   
+    const [idProveedor,setIdProveedor] = useState(null);
+    const [nombreToDeleteProveedor,setNombreToDeleteProveedor] = useState(null);
+
+    // funcion para eliminar un registro - modal
+    const handleQuestionDelete = (id, nombre) =>{
+        setModalDelete(true);
+        setIdProveedor(id);
+        setNombreToDeleteProveedor(nombre);
+    }
+
+    const handleCloseModalQuestionEliminar = () => {
+        setModalDelete(false);
+        setIdProveedor(null);
+        setNombreToDeleteProveedor(null);
+    }
+
+    // funcion para activar registro - modal
+    const handleQuestionActivar = (id,nombre) => {
+        setShowConfirmActivar(true);
+        setIdProveedor(id);
+        setNombreToDeleteProveedor(nombre);
+      };
+
+    const handleCloseModalActivar = () => {
+        setShowConfirmActivar(false);
+        setIdProveedor(null);
+        setNombreToDeleteProveedor(null);
+    };
+
+    // Handle para eliminar un usuario 
+    const handleEliminar = async (id) => {
+       
+        try {
+        // Realiza la solicitud POST para cambiar el estado del usuario
+        const response = await axiosInstance.delete(`/proveedores/deleteProveedor/${id}`);
+        
+        if (response.data.success) {
+            ToastAlert('success',response.data.message);
+            getProveedores();
+            return true; 
+        } else {
+            ToastAlert('error',response.data.message);
+            getProveedores();
+            return false; // Error al cambiar el estado
+        }
+        } catch (error) {
+            ToastAlert('error','error de conexion');
+            getProveedores();
+            return false; // Error en la conexión
+        }
+    };
+
+    const handleActivar = async (id) => {
+        
+        try {
+        // Realiza la solicitud POST para cambiar el estado del usuario
+        const response = await axiosInstance.put(`/proveedores/activarProveedor/${id}`);
+        
+        if (response.data.success) {
+            ToastAlert('success',response.data.message);
+            getProveedores();
+            return true; 
+        } else {
+            ToastAlert('error',response.data.message);
+            getProveedores();
+            return false; // Error al cambiar el estado
+        }
+        } catch (error) {
+            ToastAlert('error','error de conexion');
+            getProveedores();
+            return false; // Error en la conexión
+        }
+    };
 
     // Define columnas
     const columns = [
@@ -107,15 +206,15 @@ export function ProveedorList({ search, updateList }) {
                     <div className="d-flex justify-content-around py-2">
                         {estado == 1 ? (
                             <>
-                                <button className="btn-editar me-2">
+                                <button className="btn-editar me-2" onClick={()=>handleOpenModalEdit(row)}>
                                     <FontAwesomeIcon icon={faPenToSquare} />
                                 </button>
-                                <button className="btn-eliminar me-2">
+                                <button className="btn-eliminar me-2" onClick={() => handleQuestionDelete(row.id,row.nombre)}>
                                     <FontAwesomeIcon icon={faTrashCan} />
                                 </button>
                             </>
                         ) : (
-                            <button className="btn btn-outline-success">
+                            <button className="btn btn-outline-success" onClick={() => handleQuestionActivar(row.id,row.nombre)}>
                                 <FontAwesomeIcon icon={faPowerOff} />
                             </button>
                         )}
@@ -147,6 +246,35 @@ export function ProveedorList({ search, updateList }) {
                     selectAllRowsItem: true,
                     selectAllRowsItemText: 'Todos',
                 }}
+            />
+
+            {/* // modal para editar un proveedor */}
+            <Modal show={isModalOpen} onHide={handleCloseEditarProve} centered size="lg" className="modal-sin-borde">
+                <Modal.Header closeButton>
+                <Modal.Title>Actualizar Proveedor</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                {/* Pasa handleCloseModal como prop a CATEGORIA */}
+                    <ProveedorEdit handleCloseModal={handleCloseEditarProve} dataProveedor={dataProvee} handleProveedorUpdated={handleProveedorUpdated} />
+                </Modal.Body>
+            </Modal>
+
+            {/* MODAL PARA ELIMINAR */}
+            <ModalAlertQuestion
+                show={modalDelete}
+                idEliminar={idProveedor}
+                nombre={nombreToDeleteProveedor}
+                tipo={'proveedor'}
+                handleEliminar={handleEliminar}
+                handleCloseModal={handleCloseModalQuestionEliminar}
+            />
+            <ModalAlertActivar
+                show={showConfirmActivar}
+                idActivar={idProveedor}
+                nombre={nombreToDeleteProveedor}
+                tipo={'proveedor'}
+                handleActivar={handleActivar}
+                handleCloseModal={handleCloseModalActivar}
             />
         </div>
     );

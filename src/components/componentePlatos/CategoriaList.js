@@ -157,7 +157,7 @@ export function CategoriaList() {
         setIsModalOpen(true);
     }
 
-    const handleCloseEditarCat = (data) => {
+    const handleCloseEditarCat = () => {
         setDataCat(null);
         setIsModalOpen(false);
     }
