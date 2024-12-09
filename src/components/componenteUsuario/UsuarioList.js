@@ -10,7 +10,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import ModalAlertQuestion from '../componenteToast/ModalAlertQuestion';
 import ModalAlertActivar from '../componenteToast/ModalAlertActivar';
 import axiosInstance from '../../api/AxiosInstance';
-
+import customDataTableStyles from "../../css/estilosComponentesTable/DataTableStyles";
 
 // LOS PROPS SON PARAMETROS QUE SE ESTA RECIEBIENDO EN ESTA FUNCTION COMO "SEARCH" Y "UPDATELIST"
 export function UsuariosList({ search, updateList }) {
@@ -30,6 +30,19 @@ export function UsuariosList({ search, updateList }) {
 
   const [userIdActive, setUserIdActive] = useState(null);
   const [nombreToActive, setNombreToActive] = useState(null);
+   // Define los colores y estilos condicionales
+   const rowColors = ['#1dae79', '#d34242', '#4c7d9a', '#ff9800']; // Colores alternados
+   const conditionalRowStyles = [
+       {
+           when: (row) => row,
+           style: (row) => {
+               const index = row.id % rowColors.length; // Alterna colores según el ID
+               return {
+                   borderLeftColor: rowColors[index],
+               };
+           },
+       },
+   ];
   // Función para obtener usuarios de la API
   const fetchUsuarios = async () => {
     setLoading(true);
@@ -195,14 +208,14 @@ export function UsuariosList({ search, updateList }) {
       ),
     },    
     {
-      name: 'USUARIO',
+      name: 'Usuario',
       selector: (row) => row.email || 'No disponible',
       sortable: true,
       wrap: true,
       center: true,
     },
     {
-      name: 'NOMBRE Y APELLIDOS',
+      name: 'Nombre y Apellidos',
       selector: (row) => (
         <div>
           <div className="nombreUsuarioTabla mt-2">
@@ -217,7 +230,7 @@ export function UsuariosList({ search, updateList }) {
       
     },
     {
-      name: 'FECHA NACIMIENTO',
+      name: 'Fecha Nacimiento',
       selector: (row) => (
         <div>
           <div className="mt-2">
@@ -230,20 +243,20 @@ export function UsuariosList({ search, updateList }) {
       
     },
     {
-      name: 'TELEFONO',
+      name: 'Telefono',
       selector: (row) => row.empleado?.persona?.telefono || 'No disponible',
       sortable: true,
       wrap: true,
     },
     {
-      name: 'DOC. IDENTIDAD',
+      name: 'DOC. Identidad',
       selector: (row) =>
         row.empleado?.persona.documento_identidad || 'Documento no disponible',
       sortable: true,
       wrap: true,
     },
     {
-      name: 'CARGO',
+      name: 'Cargo',
       selector: (row) => {
         const cargo = row.empleado?.cargo?.nombre || 'Cargo no disponible';
         return cargo === 'Cargo no disponible' 
@@ -255,7 +268,7 @@ export function UsuariosList({ search, updateList }) {
     },
     
     {
-      name: 'ACCIONES',
+      name: 'Acciones',
       cell: (row) => {
         const { estado } = row;
   
@@ -306,8 +319,10 @@ export function UsuariosList({ search, updateList }) {
         responsive
         dense
         fixedHeader
+        customStyles={customDataTableStyles}
         fixedHeaderScrollHeight="500px"
         striped={true}
+        conditionalRowStyles={conditionalRowStyles}
         //selectableRows={true} //con este se activa un check  porc ada fila selccionble
         //selectableRowsHighlight={true} //resaltar la fila selecionada
 

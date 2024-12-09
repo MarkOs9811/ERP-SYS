@@ -9,6 +9,7 @@ import ModalAlertActivar from "../componenteToast/ModalAlertActivar";
 import { Modal } from "react-bootstrap";
 import { AlmacenStockAdd } from "./AlmacenStockAdd";
 import axiosInstance from "../../api/AxiosInstance";
+import customDataTableStyles from "../../css/estilosComponentesTable/DataTableStyles";
 
 
 export function AlmacenList({search,updateList}){
@@ -28,6 +29,20 @@ export function AlmacenList({search,updateList}){
 
     const [idProductoEdit, setProductoEdit] =useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Define los colores y estilos condicionales
+   const rowColors = ['#1dae79', '#d34242', '#4c7d9a', '#ff9800']; // Colores alternados
+   const conditionalRowStyles = [
+       {
+           when: (row) => row,
+           style: (row) => {
+               const index = row.id % rowColors.length; // Alterna colores según el ID
+               return {
+                   borderLeftColor: rowColors[index],
+               };
+           },
+       },
+   ];
 
     const fetchAlmacen = async () => {
         setLoading(true);
@@ -52,8 +67,7 @@ export function AlmacenList({search,updateList}){
 
     // FUNCION PARA FILTRAR BUSQEUDA DE DATOS EN ALMACEN
     useEffect(() =>{
-        // funcion efect para filtrar datos de la tabla
-  
+        
         const result = almacen.filter((producto) => {
             const { nombre,marca,precioUnit, categoria, unidad, proveedor } = producto;
           
@@ -113,7 +127,7 @@ export function AlmacenList({search,updateList}){
     const handleEliminarProductoSi = async (idActivo) =>{
         try
         {
-            const response= await axios.post(`http://erp-api.test/api/almacen/eliminar/${idActivo}`);
+            const response= await axiosInstance.post(`/almacen/eliminar/${idActivo}`);
             if(response.data.success){
                 toast.success('Activo desactivado correctamente');
                 fetchAlmacen();
@@ -134,7 +148,7 @@ export function AlmacenList({search,updateList}){
     const handleActivarProductoSi = async (idActivo) =>{
         try
         {
-            const response= await axios.post(`http://erp-api.test/api/almacen/activar/${idActivo}`);
+            const response= await axiosInstance.post(`/almacen/activar/${idActivo}`);
             if(response.data.success){
                 toast.success('Producto activado correctamente');
                 fetchAlmacen();
@@ -272,6 +286,8 @@ export function AlmacenList({search,updateList}){
                 responsive
                 dense
                 fixedHeader
+                customStyles={customDataTableStyles}
+                conditionalRowStyles={conditionalRowStyles}
                 fixedHeaderScrollHeight="500px"
                 striped={true}
                 paginationComponentOptions={{

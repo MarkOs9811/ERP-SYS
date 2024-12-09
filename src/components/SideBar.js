@@ -101,7 +101,7 @@ export function SideBar({ isCompressed }) {
     const indexB = customOrder.indexOf(b.nombre.toLowerCase());
     return (indexA !== -1 ? indexA : Infinity) - (indexB !== -1 ? indexB : Infinity);
   });
-
+  useTooltips(roles)
   return (
     <div className={`sidebar ${isCompressed ? 'compressed' : ''}`}>
       <div className="sidebar-header">
@@ -127,10 +127,11 @@ export function SideBar({ isCompressed }) {
           {orderedRoles.map((role) => {
             const roleUrl = formatRoleToUrl(role.nombre);
             const isActive = location.pathname.startsWith(`/${roleUrl}`);
+          
             const icon = getIconForRole(role.nombre);
             const uniqueId = role.nombre.replace(/\s+/g, '-').toLowerCase(); // Identificador único para acordeón
 
-            if (['rr.hh', 'finanzas'].includes(role.nombre.toLowerCase())) {
+            if (['rr.hh', 'finanzas','almacen','ventas'].includes(role.nombre.toLowerCase())) {
               return (
                 <div className="accordion-item border-0 rounded-none" key={role.id}>
                   <h2 className="accordion-header" id={`${uniqueId}-heading`}>
@@ -156,28 +157,111 @@ export function SideBar({ isCompressed }) {
                       <ul className="submenu-list">
                         {role.nombre.toLowerCase() === 'rr.hh' && (
                           <>
-                          <li className="submenu-item"><Link to="/planilla">Planilla</Link></li>
-                          <li className="submenu-item"><Link to="/ingreso-a-planilla">Ingreso a Planilla</Link></li>
-                          <li className="submenu-item"><Link to="/asistencia">Asistencia</Link></li>
-                          <li className="submenu-item"><Link to="/horas-extras">Horas Extras</Link></li>
-                          <li className="submenu-item"><Link to="/adelanto-sueldo">Adelanto de Sueldo</Link></li>
-                          <li className="submenu-item"><Link to="/vacaciones">Vacaciones</Link></li>
-                          <li className="submenu-item"><Link to="/reportes">Reportes</Link></li>
-                          <li className="submenu-item"><Link to="/ajustes">Ajustes</Link></li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/planilla` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/planilla`}>Planilla</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/ingreso-a-planilla` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/ingreso-a-planilla`}>Ingreso a Planilla</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/asistencia` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/asistencia`}>Asistencia</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/horas-extras` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/horas-extras`}>Horas Extras</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/adelanto-sueldo` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/adelanto-sueldo`}>Adelanto de Sueldo</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/acaciones` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/vacaciones`}>Vacaciones</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/reportes` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/reportes`}>Reportes</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/ajustes` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/ajustes`}>Ajustes</Link>
+                          </li>
+                          </>
+                        )}
+                         {role.nombre.toLowerCase() === 'ventas' && (
+                          <>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/misVentas` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/misVentas`}>Mis Ventas</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/inventario` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/inventario`}>Inventario</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/cajas` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/cajas`}>Cajas</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/solicitud` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/solicitud`}>Solicitud</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/reportes` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/reportes`}>Reportes</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/ajustes-ventas` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/ajustes-ventas`}>Ajustes Ventas</Link>
+                          </li>                        
                           </>
                         )}
                         {role.nombre.toLowerCase() === 'finanzas' && (
                           <>
-                            <li className="submenu-item"><Link to="/informes-financieros">Informes Financieros</Link></li>
-                            <li className="submenu-item"><Link to="/libro-diario">Libro Diario</Link></li>
-                            <li className="submenu-item"><Link to="/libro-mayor">Libro Mayor</Link></li>
-                            <li className="submenu-item"><Link to="/cuentas-por-cobrar">Cuentas por Cobrar</Link></li>
-                            <li className="submenu-item"><Link to="/cuentas-por-pagar">Cuentas por Pagar</Link></li>
-                            <li className="submenu-item"><Link to="/presupuestacion">Presupuestación</Link></li>
-                            <li className="submenu-item"><Link to="/firmar-solicitud">Firmar Solicitud</Link></li>
-                            <li className="submenu-item"><Link to="/ajustes">Ajustes</Link></li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/informes-financieros` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/informes-financieros`}>Informes Financieros</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/libro-diario` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/libro-diario`}>Libro Diario</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/libro-mayor` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/libro-mayor`}>Libro Mayor</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/cuentas-por-cobrar` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/cuentas-por-cobrar`}>Cuentas por Cobrar</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/cuentas-por-pagar` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/cuentas-por-pagar`}>Cuentas por Pagar</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/presupuestacion` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/presupuestacion`}>Presupuestación</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/firmar-solicitud` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/firmar-solicitud`}>Firmar Solicitud</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/ajustes ` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                                <Link to={`/${roleUrl}/ajustes`}>Ajustes</Link>
+                            </li>
                           </>
                         )}
+                        {role.nombre.toLowerCase() === 'almacen' && (
+                          <>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/productos` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/productos`}>Almacen</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/registro` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/registro`}>Registro</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/transferencia` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/transferencia`}>Transferencia</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/solicitud` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/solicitud`}>Solicitud</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/movimientos` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/movimientos`}>Movimientos</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/kardex` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/kardex`}>Kardex</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/reportes` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/reportes`}>Reportes</Link>
+                            </li>
+                            <li className={`submenu-item ${location.pathname === `/${roleUrl}/ajustes` ? 'active' : ''} ${isCompressed ? 'center' : ''}`}>
+                              <Link to={`/${roleUrl}/ajustes`}>Ajustes</Link>
+                            </li>
+                          </>
+                        )}
+
                       </ul>
                     </div>
                   </div>

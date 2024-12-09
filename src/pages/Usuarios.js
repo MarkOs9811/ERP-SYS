@@ -44,7 +44,7 @@ export function Usuarios() {
     <div className='row '>
       {/* Tarjetas de estadísticas */}
       <div className="col-md-4">
-        <div className="card text-center stats-card">
+        <div className="card text-center stats-card ">
           <div className="card-body">
             <FontAwesomeIcon icon={faUsers} className="icon mb-2" size="2x" />
             <h6 className="card-title mt-2">Total de Usuarios</h6>
@@ -75,7 +75,7 @@ export function Usuarios() {
 
       <div className='col-md-12 mt-4'>
         <div className='card border-0 shadow-sm'>
-          <div className="card-header d-flex justify-content-between align-items-center">
+          <div className="card-header border-bottom d-flex justify-content-between align-items-center">
             <div className="m-2">
               <h4 className="card-title mb-0 titulo-card-especial">Lista de Usuarios</h4>
             </div>

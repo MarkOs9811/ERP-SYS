@@ -92,7 +92,20 @@
   border-radius: 5px;
   padding: 8px 10px;
 }
+/* Estilo para la opción activa */
+.submenu-item.active {
+  background: white;
+  color: #ffffff!important; /* Texto blanco */
+  border-left: 4px solid #007be0;
+  border-radius: 0px;
+}
 
+/* Ajustes para el enlace dentro de la opción activa */
+.submenu-item.active a{
+  color: #196cca;
+  font-weight: bold; /* Resalta el texto */
+ 
+}
 /* ============================================== */
 /* Sidebar comprimido */
 .sidebar.compressed {
@@ -320,7 +333,7 @@
 }
 
 .titulo-card-especial{
-  color: #007be0!important;
+  color: #1d3549!important;
 }
 /* Estilo general para las tarjetas de estadísticas */
 .stats-card {
@@ -380,29 +393,30 @@
 }
 
 /* ESTILOS PARA TABLAS GENERALES */
-/* Color de fondo de la tabla y las filas */
 
-
-
+/* Estilo para las filas de la tabla */
 .tablaGeneral .rdt_TableBody .rdt_TableRow {
-  background-color: #f5f8fc !important; /* Color de fondo de las filas */
+  background-color: #fbfdff !important; 
+  transition: background-color 0.2s ease; 
 }
 
+/* Efecto hover para las filas */
 .tablaGeneral .rdt_TableBody .rdt_TableRow:hover {
-  background-color: #fbfdff !important; /* Color al pasar el mouse */
+  background-color: #eef2f8 !important; /* Color de fondo al hacer hover */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
 }
 
+/* Estilo para las celdas de la tabla */
 .tablaGeneral .rdt_TableBody .rdt_TableCell {
-  background-color: #fbfdff !important; /* Color de fondo de las celdas */
+  background-color: transparent !important; /* Transparente para heredar el fondo de la fila */
 }
 
-/* Color de la cabecera */
-.tablaGeneral .rdt_TableHead {
-  background-color: #ebeff5!important;
+
+/* Remover cualquier fondo de cuerpo de tabla adicional */
+.cuerpo-tabla {
+  background-color: transparent !important; /* Quitar fondo adicional si existe */
 }
-.cuerpo-tabla{
-  background-color: #ebeff5;
-}
+
 
 
   /* COLORES PARA BOTONES DE ACCION DEL SISTEMA */
@@ -489,6 +503,8 @@ color: #c9d6f0;
   background-color: #004080; /* Color más oscuro al hacer clic */
   transform: scale(0.95); /* Reduce ligeramente el tamaño en el clic */
 }
+
+
 /* ========== Responsivo ========== */
 @media (max-width: 768px) {
   .sidebar {
