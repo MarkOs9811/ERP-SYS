@@ -167,7 +167,7 @@ export function CategoriaList() {
     }
 
     return (
-        <div className="card">
+        <div className="card p-0">
             <div className="card-header d-flex justify-content-between align-items-center mb-2">
                 <h5 className="mb-0">Categorías</h5>
                 {/* Botón para abrir el modal */}

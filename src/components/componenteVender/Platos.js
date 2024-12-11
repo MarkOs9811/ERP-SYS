@@ -42,7 +42,7 @@ export function Platos() {
   const indexOfLastProduct = currentPage * rowsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - rowsPerPage;
   const currentProducts = productos.slice(indexOfFirstProduct, indexOfLastProduct);
-
+  const BASE_URL = process.env.REACT_APP_BASE_URL;
   if (loading) return <p>Cargando Platos...</p>;
   if (error) return <p>{error}</p>;
 
@@ -63,18 +63,21 @@ export function Platos() {
           {productos.map((producto) => (
             <div
               key={producto.id}
-              className="col-md-3 col-sm-6 my-2 d-flex align-items-stretch"
+              className="col-md-2  my-2 d-flex align-items-stretch p-0 w-auto mx-2"
             >
               <button
                 type="button"
-                className="card shadow-sm card-platos w-100"
+                className="card shadow card-platos w-100"
+                style={{ maxWidth: '200px',  objectFit: 'cover' }}
                 onClick={() => handleAddPlatoPreventa(producto.id)}
               >
                 <img
-                  src={producto.imagen || "ruta-a-imagen-por-defecto"}
+                  src={`${BASE_URL}/storage/${producto.foto}`}
                   alt={producto.nombre}
                   className="card-img-top"
+                  style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
                 />
+
                 <div className="card-body">
                   <h5 className="card-title">{producto.nombre}</h5>
                   <p className="card-text">Precio: S/. {producto.precio}</p>

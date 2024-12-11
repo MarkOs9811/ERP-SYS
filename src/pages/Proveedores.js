@@ -29,14 +29,13 @@ export function Proveedores(){
                             </div>
 
                             <div className="d-flex align-items-center">
-                            <div className="d-flex">
-                                <input type="text" placeholder="Buscar..." className="form-control"  value={search}
-                                onChange={(e) => setSearch(e.target.value)} />
-                                <button className="btn ms-2" onClick={()=>handleAddProveedor()}>
-                                    <FontAwesomeIcon icon={faPlus} className="icon" />
-                                </button>
-                            </div>
-                            
+                                <div className="d-flex">
+                                    <input type="text" placeholder="Buscar..." className="form-control"  value={search}
+                                    onChange={(e) => setSearch(e.target.value)} />
+                                    <button className="btn ms-3" onClick={()=>handleAddProveedor()}>
+                                        <FontAwesomeIcon icon={faPlus} className="icon" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     <div className="card-body p-0">

@@ -45,13 +45,37 @@ export const handleInputChange = (setter, setValue, fieldName, regex = /^\d*$/, 
   };
   
   export const validatePrecio = (value) => {
-    const regex = /^[0-9]*(\.[0-9]{1,2})?$/; // Números decimales
-    if (!value) {
-      return "El precio es obligatorio";
-    }
-    if (!regex.test(value)) {
-      return "El precio debe ser un número válido con hasta 2 decimales";
-    }
-    return true; // Validación exitosa
+      // Filtrar caracteres no numéricos, excepto el punto decimal
+      const formattedValue = value.replace(/[^0-9.]/g, '');  // Solo números y punto
+      const regex = /^[0-9]+(\.[0-9]{1,2})?$/; // Regex para validar hasta 2 decimales
+
+      // Se actualiza el valor del input con el valor formateado (si es necesario)
+      if (formattedValue !== value) {
+          return "El precio debe ser un número válido con hasta 2 decimales";
+      }
+
+      // Validación
+      if (!value) {
+          return "El precio es obligatorio";
+      }
+      if (!regex.test(value)) {
+          return "El precio debe ser un número válido con hasta 2 decimales";
+      }
+
+      return true; // Validación exitosa
   };
+  export const handlePrecioInput = (e) => {
+      const value = e.target.value;
+
+      // Eliminar cualquier carácter no numérico, excepto el punto
+      let formattedValue = value.replace(/[^0-9.]/g, '');
+
+      // Limitar a 2 decimales
+      formattedValue = formattedValue.replace(/^(\d+\.\d{2}).*/, '$1');
+
+      // Asignar el valor formateado al input
+      e.target.value = formattedValue;
+  };
+
+
   

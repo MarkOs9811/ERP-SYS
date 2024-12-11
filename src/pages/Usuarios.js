@@ -98,7 +98,7 @@ export function Usuarios() {
       </div>
 
       {/* Modal para agregar usuario*/}
-      <Modal show={showModal} onHide={handleCloseModal} centered>
+      <Modal show={showModal} onHide={handleCloseModal} centered className='modal-sin-borde'>
         <Modal.Header closeButton>
           <Modal.Title>Registrar Usuario</Modal.Title>
         </Modal.Header>

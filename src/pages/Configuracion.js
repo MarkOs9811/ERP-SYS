@@ -72,14 +72,7 @@ export function Configuracion() {
     }
   };
 
-  const handleLogoChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const objectUrl = URL.createObjectURL(file); // Crear un objeto URL para la previsualización
-      setLogoPreview(objectUrl); // Establecer el logo previsualizado
-      setLogoFile(file); // Guardar el archivo para enviarlo al servidor
-    }
-  };
+ 
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*', // Aceptar cualquier imagen
