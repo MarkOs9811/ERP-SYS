@@ -4,7 +4,8 @@ import axiosInstance from "../../api/AxiosInstance";
 import DataTable from "react-data-table-component";
 import "../../css/EstilosPlatos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBackward, faUtensils } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faBackward, faPlus, faUtensils } from "@fortawesome/free-solid-svg-icons";
+import {capitalizeFirstLetter} from "../../hooks/FirstLetterUp";
 
 export function Platos() {
   const { id } = useParams();
@@ -55,51 +56,10 @@ export function Platos() {
     
   }
 
-  const columns = [
-    {
-      name: "Productos",
-      cell: () => (
-        <div className="row">
-          {productos.map((producto) => (
-            <div
-              key={producto.id}
-              className="col-md-2  my-2 d-flex align-items-stretch p-0 w-auto mx-2"
-            >
-              <button
-                type="button"
-                className="card shadow card-platos w-100"
-                style={{ maxWidth: '200px',  objectFit: 'cover' }}
-                onClick={() => handleAddPlatoPreventa(producto.id)}
-              >
-                <img
-                  src={`${BASE_URL}/storage/${producto.foto}`}
-                  alt={producto.nombre}
-                  className="card-img-top"
-                  style={{ maxWidth: '200px', maxHeight: '200px', objectFit: 'cover' }}
-                />
-
-                <div className="card-body">
-                  <h5 className="card-title">{producto.nombre}</h5>
-                  <p className="card-text">Precio: S/. {producto.precio}</p>
-                </div>
-              </button>
-            </div>
-          ))}
-        </div>
-      ),
-      ignoreRowClick: true,
-      allowOverflow: true,
-      sortable: false, // Desactiva el ordenado para esta columna
-    },
-  ];
-  
-  
-
   return (
-    
-      <div className="row  vh-auto">
-        <div className="col-md-12 mb-2">
-        <div className="card  shadow-sm p-3">
+      <div className="row g-3">
+        <div className="col-md-12 ">
+          <div className="card  shadow-sm p-3">
             <div className="d-flex align-items-center justify-content-between">
                 {/* Botón de volver */}
                 <button className="btn btn-outline-dark d-flex align-items-center" onClick={() => habldeVolverMesas()}>
@@ -113,11 +73,10 @@ export function Platos() {
                 Platos para la mesa {id}
                 </h5>
             </div>
-            </div>
-
+          </div>
         </div>
         {/* Columna de la cuenta */}
-        <div className="col-md-3  d-flex flex-column p-2">
+        <div className="col-md-3 d-flex flex-column ">
           <div className="card  shadow-sm p-3 flex-grow-1">
             <h4>Cuenta</h4>
             <ul>
@@ -129,21 +88,43 @@ export function Platos() {
         </div>
 
         {/* Columna de los productos */}
-        <div className="col-md-9 d-flex flex-column p-2">
-          <div className="card  shadow-sm p-3 flex-grow-1 ">
-            <h4>Productos Disponibles</h4>
-            <div className="datatable-container">
-            <DataTable
-              columns={columns}
-              data={[{}]} // Se necesita un array para inicializar el DataTable
-              pagination
-              paginationServer
-              paginationTotalRows={productos.length}
-              paginationRowsPerPageOptions={[4, 8, 12]}
-              responsive
-            />
+        <div className="col-md-9 d-flex flex-column ">
+            <div className="card shadow-sm p-3 flex-grow-1">
+                <div className="card-header">
+                    <h4>Productos Disponibles</h4>
+                </div>
+                <div className="card-body">
+                    <div className="row g-3 justify-content-start">
+                        {productos.map((producto) => (
+                            <button
+                                type="button"
+                                key={producto.id}
+                                className="float-left col-md-2 card-platillo  card p-0 mx-2 "
+                                onClick={() => handleAddPlatoPreventa(producto.id)}
+                                style={{ maxWidth: '300px', minHeight:'28 0px'}}
+                            >
+                                <img
+                                    src={`${BASE_URL}/storage/${producto.foto}`}
+                                    alt={producto.nombre}
+                                    className="card-img-top"
+                                    style={{ maxWidth: 'auto', maxHeight: '120px', objectFit: 'cover' }}
+                                />
+                                <div className="card-body">
+                                    <h6 className="card-title mb-3">{capitalizeFirstLetter(producto.nombre)}</h6>
+                                    <span className="rounded-pill p-1 card-text bg-warning fw-bold precioCard">
+                                        S/. {producto.precio}
+                                    </span>
+                                </div>
+                                <div className="card-footer border-0 w-100">
+                                    <button type="button" className="btn-añadir w-100">
+                                        <span className="me-2"><FontAwesomeIcon icon={faPlus} /></span>Agregar
+                                    </button>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
       </div>
   );

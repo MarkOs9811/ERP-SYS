@@ -6,6 +6,7 @@ import { faPlus, faUserCheck, faUsers, faWarehouse } from '@fortawesome/free-sol
 import { Modal, Button } from 'react-bootstrap';  // Importamos el Modal de React-Bootstrap
 import { ToastContainer } from 'react-toastify';
 import axios from 'axios';
+import axiosInstance from '../api/AxiosInstance';
 
 export function Usuarios() {
   const [showModal, setShowModal] = useState(false);
@@ -21,7 +22,7 @@ export function Usuarios() {
      
       const obtenerEstadisticas = async () => {
           try {
-              const { data } = await axios.get('http://erp-api.test/api/usuarios/estadisticas');
+              const { data } = await axiosInstance.get('/usuarios/estadisticas');
               setEstadisticas(data);
           } catch (error) {
               console.error('Error al obtener las estadísticas:', error);
@@ -44,7 +45,7 @@ export function Usuarios() {
     <div className='row '>
       {/* Tarjetas de estadísticas */}
       <div className="col-md-4">
-        <div className="card text-center stats-card ">
+        <div className="card shadow-sm text-center stats-card ">
           <div className="card-body">
             <FontAwesomeIcon icon={faUsers} className="icon mb-2" size="2x" />
             <h6 className="card-title mt-2">Total de Usuarios</h6>
@@ -54,7 +55,7 @@ export function Usuarios() {
       </div>
 
       <div className="col-md-4">
-        <div className="card text-center stats-card">
+        <div className="card shadow-sm text-center stats-card">
           <div className="card-body">
             <FontAwesomeIcon icon={faUserCheck} className="icon mb-2" size="2x" />
             <h6 className="card-title mt-2">Usuarios Activos</h6>
@@ -64,7 +65,7 @@ export function Usuarios() {
       </div>
 
       <div className="col-md-4">
-        <div className="card text-center stats-card">
+        <div className="card shadow-sm text-center stats-card">
           <div className="card-body">
             <FontAwesomeIcon icon={faWarehouse} className="icon mb-2" size="2x" />
             <h6 className="card-title mt-2">Cargo: Almacén</h6>

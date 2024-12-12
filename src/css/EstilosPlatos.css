@@ -9,17 +9,38 @@
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
   }
-  
-  .btn-primary {
-    background-color: #d9534f;
-    border-color: #d43f3a;
-  }
-  
-  .btn-primary:hover {
-    background-color: #c9302c;
-    border-color: #ac2925;
-  }
+ 
   .platosTabla{
     width: 100%;
+  }
+  .precioCard{
+    width: auto;
+    position: absolute;
+    right: 5%;
+    bottom: 23%;
+  }
+  .btn-añadir{
+    border-radius: 15px;
+    border: 1px solid grey;
+    padding: 10px;
+    font-weight: bolder;
+    transition: all ease-out 0.2s;
+  }
+  .btn-añadir:hover{
+    background-color: rgb(6, 214, 93);
+  }
+
+  .btn-añadir:active{
+    background-color: rgb(0, 167, 69);
+    transform: scale(1.1,1.1);
+  }
+
+  .card-platillo{
+    transition: all ease-out 0.2s;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.185);
+  }
+  .card-platillo:hover{
+    transform: scale(1.1,1.1);
+    z-index: 1000;
   }
   
