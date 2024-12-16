@@ -131,7 +131,7 @@ export function SideBar({ isCompressed }) {
             const icon = getIconForRole(role.nombre);
             const uniqueId = role.nombre.replace(/\s+/g, '-').toLowerCase(); // Identificador único para acordeón
 
-            if (['rr.hh', 'finanzas','almacen','ventas'].includes(role.nombre.toLowerCase())) {
+            if (['rr.hh', 'finanzas','almacen','ventas','vender'].includes(role.nombre.toLowerCase())) {
               return (
                 <div className="accordion-item border-0 rounded-none" key={role.id}>
                   <h2 className="accordion-header" id={`${uniqueId}-heading`}>
@@ -203,6 +203,17 @@ export function SideBar({ isCompressed }) {
                           <li className={`submenu-item ${location.pathname === `/${roleUrl}/ajustes-ventas` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
                               <Link to={`/${roleUrl}/ajustes-ventas`}>Ajustes Ventas</Link>
                           </li>                        
+                          </>
+                        )}
+                        {role.nombre.toLowerCase() === 'vender' && (
+                          <>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/ventasMesas` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/ventasMesas`}>Mesas</Link>
+                          </li>
+                          <li className={`submenu-item ${location.pathname === `/${roleUrl}/ventasLlevar` ? 'active' : ''} ${isCompressed ? 'center': '' }`}>
+                              <Link to={`/${roleUrl}/ventasLlevar`}>Llevar</Link>
+                          </li>
+                                                 
                           </>
                         )}
                         {role.nombre.toLowerCase() === 'finanzas' && (

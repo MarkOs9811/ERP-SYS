@@ -19,6 +19,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 import { Vender } from './pages/Vender';
 import { Platos } from './components/componenteVender/Platos';
 import { Proveedores } from './pages/Proveedores';
+import { Llevar } from './components/componenteVender/Llevar';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -69,9 +70,10 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/usuarios" element={<Usuarios />} />
                         <Route path="/almacen/productos" element={<Almacen />} />
-                        <Route path="/vender" element={<Vender />} />
+                        <Route path="/vender/ventasMesas" element={<Vender />} />
+                        <Route path="/vender/ventasLLevar" element={<Llevar />} />
+                        <Route path="/vender/ventasMesas/platos/:id" element={<Platos />} />
                         <Route path="/proveedores" element={<Proveedores />} />
-                        <Route path="/vender/platos/:id" element={<Platos />} />
                         <Route path="/configuracion" element={<Configuracion />} />
                         <Route path="/platos" element={<MenuPlato />} />
                       </Routes>

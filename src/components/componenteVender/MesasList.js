@@ -31,7 +31,7 @@ export function MesasList() {
 
   const handleMesaClick = (id) => {
     // Navegar a Platos.js con el id de la mesa como parámetro
-    navigate(`/vender/platos/${id}`);
+    navigate(`/vender/ventasMesas/platos/${id}`);
   };
 
   if (loading) return <p>Cargando mesas...</p>;

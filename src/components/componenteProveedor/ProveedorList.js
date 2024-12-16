@@ -48,7 +48,7 @@ export function ProveedorList({ search, updateList }) {
     useEffect(() => {
         const result = proveedores.filter((proveedore) => {
             const { nombre, numero_documento, telefono, direccion, email } = proveedore;
-            const searchLower = search.toLowerCase();
+            const searchLower = search?.toLowerCase();
             return (
                 (nombre && nombre.toLowerCase().includes(searchLower)) ||
                 (numero_documento && numero_documento.toLowerCase().includes(searchLower)) ||

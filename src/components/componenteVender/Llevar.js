@@ -4,11 +4,11 @@ import axiosInstance from "../../api/AxiosInstance";
 import DataTable from "react-data-table-component";
 import "../../css/EstilosPlatos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faBackward, faBasketShopping, faFilter, faPlus, faSearch, faUtensils } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faBackward, faBasketShopping, faBox, faFilter, faPlus, faSearch, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import {capitalizeFirstLetter} from "../../hooks/FirstLetterUp";
 import ToastAlert from "../componenteToast/ToastAlert";
 
-export function Platos() {
+export function Llevar() {
   const { id } = useParams();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +48,7 @@ export function Platos() {
   if (loading) return <p>Cargando Platos...</p>;
   if (error) return <p>{error}</p>;
 
-  const habldeVolverMesas = () => {
-    // Navegar a Platos.js con el id de la mesa como parámetro
-    navigate(`/vender/ventasMesas`);
-  };
+  
 
   const handleAddPlatoPreventa = async (id) => {
     try {
@@ -68,26 +65,9 @@ export function Platos() {
     }
 };
 
-
   return (
       <div className="row g-3">
-        <div className="col-md-12 ">
-          <div className="card  shadow-sm p-3">
-            <div className="d-flex align-items-center justify-content-between">
-                {/* Botón de volver */}
-                <button className="btn btn-outline-dark d-flex align-items-center" onClick={() => habldeVolverMesas()}>
-                <FontAwesomeIcon icon={faArrowLeft} className="me-2" />
-                Volver
-                </button>
-
-                {/* Título de la card */}
-                <h5 className="m-0 d-flex align-items-center">
-                <FontAwesomeIcon icon={faUtensils} className="me-2 text-warning" />
-                Platos para la mesa {id}
-                </h5>
-            </div>
-          </div>
-        </div>
+        
         {/* Columna de la cuenta */}
         <div className="col-md-3 d-flex flex-column ">
           <div className="card  shadow-sm p-3 flex-grow-1">
@@ -101,8 +81,8 @@ export function Platos() {
         </div>
 
         {/* Columna de los productos */}
-        <div className="col-md-9 d-flex flex-column ">
-            <div className="card shadow-sm flex-grow-1">
+        <div className="col-md-9 d-flex flex-column p-0">
+            <div className="card shadow-sm  flex-grow-1">
                 <div className="card-header d-flex align-items-center justify-content-between bg-white border-bottom py-3">
                     <h4 className="mb-0 text-dark ">Platos</h4>
 
@@ -133,13 +113,16 @@ export function Platos() {
                         </button>
                     </div>
                 </div>
+
+
+
                 <div className="card-body ">
                     <div className="row g-3 justify-content-start contenedor-platos">
                         {productos.map((producto) => (
                             <button
                                 type="button"
                                 key={producto.id}
-                                className="float-left col-md-2 card-platillo  card p-0 mx-2 "
+                                className="float-left col-md-2 card-platillo shadow-sm  card p-0 mx-2 "
                                 style={{ maxWidth: '300px', minHeight:'180px'}}s
                             >
                                 <img

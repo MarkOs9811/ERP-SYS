@@ -13,6 +13,8 @@ import { Modal } from "react-bootstrap";
 export function PlatoList({search,upDateList}){
 
    const [platosList,setPlatosList] = useState([]);
+   const [filterPlatos, setFilterPlatos] = useState([]);
+
    const BASE_URL = process.env.REACT_APP_BASE_URL;
 
    
@@ -21,6 +23,7 @@ export function PlatoList({search,upDateList}){
             const response = await axiosInstance.get('/gestionPlatos/getPlatos');
             if(response.data.success){
                 setPlatosList(response.data.platos);
+                setFilterPlatos(response.data.platos);
             }else{
                 console.log(response.data.message);
             }
@@ -29,9 +32,7 @@ export function PlatoList({search,upDateList}){
         }
    }
 
-   useEffect (() => {
-        getPlatos();
-   },[upDateList])
+   
 
    const [showModalEditar, setShowModalEditar] = useState(false);
    const [dataPlato, setDataPlato] = useState([]);
@@ -46,6 +47,27 @@ export function PlatoList({search,upDateList}){
     setDataPlato([]);
     getPlatos();
    }
+  
+   // Filtrar registros según búsqueda
+   useEffect(() => {
+        const result = platosList.filter((plato) => {
+            const { nombre, categoria, descripcion, precio } = plato;
+            const searchLower = search.toLowerCase();
+            return (
+                (nombre && nombre.toLowerCase().includes(searchLower)) ||
+                (categoria?.nombre && categoria.nombre.toLowerCase().includes(searchLower)) ||
+                (descripcion && descripcion.toLowerCase().includes(searchLower)) ||
+                (precio && precio.includes(searchLower))
+            );
+        });
+        setFilterPlatos(result);
+    }, [search, platosList]);
+
+    useEffect (() => {
+        getPlatos();
+    },[upDateList])
+
+
    const columns = [
         {
             name: 'Foto',
@@ -116,13 +138,14 @@ export function PlatoList({search,upDateList}){
         },
        
     ];
+    
     useTooltips(platosList)
     return(
         <div>
            <DataTable
                 className="tablaGeneral"
                 columns={columns}
-                data={platosList}
+                data={filterPlatos}
                 pagination
                 responsive
                 dense

@@ -7,7 +7,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { Modal } from "react-bootstrap";
 
 export function MenuPlato(){
-    const [search,setSearch] = useState(null);
+    const [search,setSearch] = useState("");
     const [upDateList,setUpDateList] = useState(false);
     const [showModal,setShowModal] = useState(false);
     
