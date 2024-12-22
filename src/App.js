@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 
+// IMPORTACION DE CONTEXTOS
+import { CajaProtectedRoute } from "../src/components/CajaProtectedRoute";
+import { CajaProvider } from "../src/CajaContext";
+
 import { PrivateRoute } from './components/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -17,9 +21,10 @@ import { Almacen } from './pages/Almacen';
 import { Configuracion } from './pages/Configuracion';
 import { AuthProvider, useAuth } from './AuthContext';
 import { Vender } from './pages/Vender';
+import { Llevar } from './components/componenteVender/Llevar';
 import { Platos } from './components/componenteVender/Platos';
 import { Proveedores } from './pages/Proveedores';
-import { Llevar } from './components/componenteVender/Llevar';
+import { AbrirCaja } from './pages/AbrirCaja';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -52,39 +57,71 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/*"
-            element={
-              <PrivateRoute>
-                <div className="main-container">
-                  <SideBar isCompressed={!sidebarOpen} />
-                  <div className={`content ${sidebarOpen ? 'open' : ''}`}>
-                    <Header onToggleSidebar={toggleSidebar} />
+      <CajaProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+           
+            <Route
+              path="/*"
+              element={
+                <PrivateRoute>
+                  <div className="main-container">
+                    <SideBar isCompressed={!sidebarOpen} />
+                    <div className={`content ${sidebarOpen ? "open" : ""}`}>
+                      <Header onToggleSidebar={toggleSidebar} />
                       <Navegacion />
-                    <div className="container-fluid pt-3 px-3">
-                      <ToastContainer />
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/usuarios" element={<Usuarios />} />
-                        <Route path="/almacen/productos" element={<Almacen />} />
-                        <Route path="/vender/ventasMesas" element={<Vender />} />
-                        <Route path="/vender/ventasLLevar" element={<Llevar />} />
-                        <Route path="/vender/ventasMesas/platos/:id" element={<Platos />} />
-                        <Route path="/proveedores" element={<Proveedores />} />
-                        <Route path="/configuracion" element={<Configuracion />} />
-                        <Route path="/platos" element={<MenuPlato />} />
-                      </Routes>
+                      <div className="container-fluid pt-3 px-3">
+                        <ToastContainer />
+                        <Routes>
+                          <Route path="/" element={<Home />} />
+                          <Route path="/usuarios" element={<Usuarios />} />
+                          <Route
+                            path="/almacen/productos"
+                            element={<Almacen />}
+                          />
+                          <Route
+                            path="/vender/*"
+                            element={
+                              <CajaProtectedRoute>
+                                <Routes>
+                                  <Route
+                                    path="ventasMesas"
+                                    element={<Vender />}
+                                  />
+                                  <Route
+                                    path="ventasLlevar"
+                                    element={<Llevar />}
+                                  />
+                                  <Route
+                                    path="ventasMesas/platos/:id"
+                                    element={<Platos />}
+                                  />
+                                </Routes>
+                              </CajaProtectedRoute>
+                              
+                            }
+                          />
+                           <Route path="/abrirCaja" element={<AbrirCaja />} />
+                          <Route
+                            path="/proveedores"
+                            element={<Proveedores />}
+                          />
+                          <Route
+                            path="/configuracion"
+                            element={<Configuracion />}
+                          />
+                          <Route path="/platos" element={<MenuPlato />} />
+                        </Routes>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </Router>
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </Router>
+      </CajaProvider>
     </AuthProvider>
   );
 }

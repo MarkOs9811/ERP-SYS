@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import DataTable from 'react-data-table-component';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faHome, faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import {  faTrashCan } from '@fortawesome/free-regular-svg-icons';
-import { UsuarioEditar } from './UsuarioEditar';
-import { Modal } from 'react-bootstrap'; 
-import { toast, ToastContainer } from 'react-toastify';
-import ModalAlertQuestion from '../componenteToast/ModalAlertQuestion';
-import ModalAlertActivar from '../componenteToast/ModalAlertActivar';
-import axiosInstance from '../../api/AxiosInstance';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import DataTable from "react-data-table-component";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faHome, faPowerOff } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { UsuarioEditar } from "./UsuarioEditar";
+import { Modal } from "react-bootstrap";
+import { toast, ToastContainer } from "react-toastify";
+import ModalAlertQuestion from "../componenteToast/ModalAlertQuestion";
+import ModalAlertActivar from "../componenteToast/ModalAlertActivar";
+import axiosInstance from "../../api/AxiosInstance";
 import customDataTableStyles from "../../css/estilosComponentesTable/DataTableStyles";
 
 // LOS PROPS SON PARAMETROS QUE SE ESTA RECIEBIENDO EN ESTA FUNCTION COMO "SEARCH" Y "UPDATELIST"
@@ -30,24 +30,24 @@ export function UsuariosList({ search, updateList }) {
 
   const [userIdActive, setUserIdActive] = useState(null);
   const [nombreToActive, setNombreToActive] = useState(null);
-   // Define los colores y estilos condicionales
-   const rowColors = ['#1dae79', '#d34242', '#4c7d9a', '#ff9800']; // Colores alternados
-   const conditionalRowStyles = [
-       {
-           when: (row) => row,
-           style: (row) => {
-               const index = row.id % rowColors.length; // Alterna colores según el ID
-               return {
-                   borderLeftColor: rowColors[index],
-               };
-           },
-       },
-   ];
+  // Define los colores y estilos condicionales
+  const rowColors = ["#1dae79", "#d34242", "#4c7d9a", "#ff9800"]; // Colores alternados
+  const conditionalRowStyles = [
+    {
+      when: (row) => row,
+      style: (row) => {
+        const index = row.id % rowColors.length; // Alterna colores según el ID
+        return {
+          borderLeftColor: rowColors[index],
+        };
+      },
+    },
+  ];
   // Función para obtener usuarios de la API
   const fetchUsuarios = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get('/usuarios');
+      const response = await axiosInstance.get("/usuarios");
       if (response.data) {
         setUsuarios(response.data.data);
         setFilteredUsuarios(response.data.data);
@@ -55,7 +55,7 @@ export function UsuariosList({ search, updateList }) {
         setError(response.data.message);
       }
     } catch (err) {
-      setError('Hubo un error al cargar los datos');
+      setError("Hubo un error al cargar los datos");
     } finally {
       setLoading(false);
     }
@@ -66,30 +66,30 @@ export function UsuariosList({ search, updateList }) {
     fetchUsuarios();
   }, [updateList]);
 
-
   // funcion efect para filtrar datos de la tabla
   useEffect(() => {
     const result = usuarios.filter((usuario) => {
       const { email, empleado } = usuario;
       const persona = empleado?.persona || {}; // Evita errores si empleado o persona no están definidos
       const { nombre, apellidos, telefono, documento_identidad } = persona;
-  
+
       // Convierte el texto de búsqueda a minúsculas para comparación insensible a mayúsculas
       const searchLower = search.toLowerCase();
-  
+
       // Filtra los usuarios basándose en los campos relevantes
       return (
-        (email && email.toLowerCase().includes(searchLower)) || 
+        (email && email.toLowerCase().includes(searchLower)) ||
         (nombre && nombre.toLowerCase().includes(searchLower)) ||
         (apellidos && apellidos.toLowerCase().includes(searchLower)) ||
         (telefono && String(telefono).toLowerCase().includes(searchLower)) ||
-        (documento_identidad && String(documento_identidad).toLowerCase().includes(searchLower))
+        (documento_identidad &&
+          String(documento_identidad).toLowerCase().includes(searchLower))
       );
     });
-  
+
     setFilteredUsuarios(result);
   }, [search, usuarios]);
-  
+
   const handleOpenModalEdit = (id) => {
     setIdUsuario(id);
     setIsModalOpen(true);
@@ -103,43 +103,42 @@ export function UsuariosList({ search, updateList }) {
 
   const handleUsuarioUpdated = () => {
     fetchUsuarios();
-  }; 
-    // para abrir el modal de pregunta
-  const handleDeleteClick = (userId,nombre) => {
+  };
+  // para abrir el modal de pregunta
+  const handleDeleteClick = (userId, nombre) => {
     setShowConfirm(true);
     setUserIdToDelete(userId);
     setNombreToDelete(nombre);
   };
 
-  const handleActivarClick = (userId,nombre) => {
+  const handleActivarClick = (userId, nombre) => {
     setShowConfirmTrue(true);
     setUserIdActive(userId);
     setNombreToActive(nombre);
   };
 
- 
   const handleCloseModalQuestionEliminar = () => {
     setShowConfirm(false);
     setUserIdToDelete(null);
     setNombreToDelete(null);
   };
-  
+
   const handleCloseModalQuestionActivar = () => {
     setShowConfirmTrue(false);
     setUserIdActive(null);
     setNombreToActive(null);
   };
 
-  // Handle para eliminar un usuario 
+  // Handle para eliminar un usuario
   const handleEliminar = async (userId) => {
     try {
       // Realiza la solicitud POST para cambiar el estado del usuario
       const response = await axiosInstance.post(`/usuarios/eliminar/${userId}`);
-      
+
       if (response.data.success) {
         toast.success("Usuario eliminado correctamente");
         fetchUsuarios();
-        return true; 
+        return true;
       } else {
         toast.error("Error al cambiar el estado del usuario");
         fetchUsuarios();
@@ -152,12 +151,12 @@ export function UsuariosList({ search, updateList }) {
     }
   };
 
-   // Handle para ACTIVAR un usuario 
-   const handleActivarUser = async (userId) => {
+  // Handle para ACTIVAR un usuario
+  const handleActivarUser = async (userId) => {
     try {
       // Realiza la solicitud POST para cambiar el estado del usuario
       const response = await axiosInstance.post(`/usuarios/activar/${userId}`);
-      
+
       if (response.data.success) {
         toast.success("Usuario activado correctamente");
         fetchUsuarios();
@@ -174,104 +173,102 @@ export function UsuariosList({ search, updateList }) {
     }
   };
 
-
   if (loading) return <p>Cargando usuarios...</p>;
   if (error) return <p>{error}</p>;
 
   const columns = [
     {
-      name: 'ID',
+      name: "ID",
       selector: (row) => row.id,
       sortable: true,
       wrap: true,
       center: true,
-     
     },
     {
-      name: 'Foto',
-      selector: (row) => row.fotoPerfil || 'No disponible',
-      sortable: true, 
+      name: "Foto",
+      selector: (row) => row.fotoPerfil || "No disponible",
+      sortable: true,
       wrap: true,
       center: true,
       cell: (row) => (
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: "center" }}>
           {row.fotoPerfil ? (
-            <img 
-              src={`${BASE_URL}/storage/${row.fotoPerfil}`}  // Aquí colocas la URL completa a la imagen (puede ser en 'public')
-              alt="Foto de perfil" 
-              style={{ width: '50px', height: '50px', borderRadius: '50%' }} // Ajusta el tamaño y el estilo
+            <img
+              src={`${BASE_URL}/storage/${row.fotoPerfil}`} // Aquí colocas la URL completa a la imagen (puede ser en 'public')
+              alt="Foto de perfil"
+              style={{ width: "50px", height: "50px", borderRadius: "50%" }} // Ajusta el tamaño y el estilo
             />
           ) : (
             <span>No disponible</span> // Si no hay foto, muestra este texto
           )}
         </div>
       ),
-    },    
+    },
     {
-      name: 'Usuario',
-      selector: (row) => row.email || 'No disponible',
+      name: "Usuario",
+      selector: (row) => row.email || "No disponible",
       sortable: true,
       wrap: true,
       center: true,
     },
     {
-      name: 'Nombre y Apellidos',
+      name: "Nombre y Apellidos",
       selector: (row) => (
         <div>
           <div className="nombreUsuarioTabla mt-2">
-            {row.empleado?.persona?.nombre || 'N/A'} {row.empleado?.persona?.apellidos || 'N/A'}
+            {row.empleado?.persona?.nombre || "N/A"}{" "}
+            {row.empleado?.persona?.apellidos || "N/A"}
           </div>
           {row.empleado?.persona?.correo && (
-            <small className="badge-user mb-2">{row.empleado.persona.correo}</small>
+            <small className="badge-user mb-2">
+              {row.empleado.persona.correo}
+            </small>
           )}
         </div>
       ),
       sortable: true,
-      
     },
     {
-      name: 'Fecha Nacimiento',
+      name: "Fecha Nacimiento",
       selector: (row) => (
         <div>
           <div className="mt-2">
-            {row.empleado?.persona?.fecha_nacimiento || 'N/A'} 
+            {row.empleado?.persona?.fecha_nacimiento || "N/A"}
           </div>
-          
         </div>
       ),
       sortable: true,
-      
     },
     {
-      name: 'Telefono',
-      selector: (row) => row.empleado?.persona?.telefono || 'No disponible',
+      name: "Telefono",
+      selector: (row) => row.empleado?.persona?.telefono || "No disponible",
       sortable: true,
       wrap: true,
     },
     {
-      name: 'DOC. Identidad',
+      name: "DOC. Identidad",
       selector: (row) =>
-        row.empleado?.persona.documento_identidad || 'Documento no disponible',
+        row.empleado?.persona.documento_identidad || "Documento no disponible",
       sortable: true,
       wrap: true,
     },
     {
-      name: 'Cargo',
+      name: "Cargo",
       selector: (row) => {
-        const cargo = row.empleado?.cargo?.nombre || 'Cargo no disponible';
-        return cargo === 'Cargo no disponible' 
-          ? cargo 
+        const cargo = row.empleado?.cargo?.nombre || "Cargo no disponible";
+        return cargo === "Cargo no disponible"
+          ? cargo
           : cargo.charAt(0).toUpperCase() + cargo.slice(1).toLowerCase();
       },
       sortable: true,
       wrap: true,
     },
-    
+
     {
-      name: 'Acciones',
+      name: "Acciones",
       cell: (row) => {
         const { estado } = row;
-  
+
         return (
           <div className="d-flex justify-content-around">
             {estado === 1 ? (
@@ -307,7 +304,6 @@ export function UsuariosList({ search, updateList }) {
       ignoreRowClick: true,
     },
   ];
-  
 
   return (
     <div>
@@ -328,15 +324,13 @@ export function UsuariosList({ search, updateList }) {
 
         // onRowClicked={(row) => console.log(row)} para ejecutar cuandos e hace click en cada fila
         paginationComponentOptions={{
-          rowsPerPageText: 'Filas por página:',
-          rangeSeparatorText: 'de',
+          rowsPerPageText: "Filas por página:",
+          rangeSeparatorText: "de",
           selectAllRowsItem: true,
-          selectAllRowsItemText: 'Todos',
+          selectAllRowsItemText: "Todos",
         }}
-        
       />
 
-     
       {/* // modal para editar un usuario */}
       <Modal show={isModalOpen} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
@@ -344,16 +338,20 @@ export function UsuariosList({ search, updateList }) {
         </Modal.Header>
         <Modal.Body>
           {/* Pasa handleCloseModal como prop a UsuarioForm */}
-          <UsuarioEditar handleCloseModal={handleCloseModal} idUsuario={idUsuario} onUsuarioUpdated={handleUsuarioUpdated} />
+          <UsuarioEditar
+            handleCloseModal={handleCloseModal}
+            idUsuario={idUsuario}
+            onUsuarioUpdated={handleUsuarioUpdated}
+          />
         </Modal.Body>
       </Modal>
 
-        {/* MODAL PARA ELIMINAR USUARIO */}
+      {/* MODAL PARA ELIMINAR USUARIO */}
       <ModalAlertQuestion
         show={showConfirm}
         idEliminar={userIdToDelete}
         nombre={nombreToDelete}
-        tipo={'usuario'}
+        tipo={"usuario"}
         handleEliminar={handleEliminar}
         handleCloseModal={handleCloseModalQuestionEliminar}
       />
@@ -364,7 +362,6 @@ export function UsuariosList({ search, updateList }) {
         handleActivar={handleActivarUser}
         handleCloseModal={handleCloseModalQuestionActivar}
       />
-
-      </div>
+    </div>
   );
 }
