@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
-import '../../css/EstilosMesas.css';
+import "../../css/EstilosMesas.css";
 
 export function MesasList() {
   const [mesas, setMesas] = useState([]);
@@ -55,10 +55,10 @@ export function MesasList() {
                   width: "10px",
                   height: "10px",
                   borderRadius: "50%",
-                  backgroundColor: mesa.estado = 1 ? "#10ba82" : "red",
+                  backgroundColor: (mesa.estado = 1 ? "#10ba82" : "red"),
                 }}
               ></span>{" "}
-              {mesa.estado = 1 ? "Disponible" : "Ocupado"}
+              {(mesa.estado = 1 ? "Disponible" : "Ocupado")}
             </p>
             <p>Piso: {mesa.piso}</p>
             <p>Capacidad: {mesa.capacidad}</p>

@@ -95,8 +95,7 @@ export function Llevar() {
         <div className="card shadow-sm  flex-grow-1">
           <div className="card-header d-flex align-items-center justify-content-between bg-white border-bottom py-3">
             <h4 className="mb-0 text-dark ">Platos</h4>
-
-            <div className="d-flex align-items-center gap-3 w-50">
+            <div className="d-flex align-items-center gap-2 w-80">
               {/* Botón para cambiar vista */}
               <button
                 className="btn btn-primary rounded shadow-sm d-flex align-items-center justify-content-center"
@@ -109,7 +108,7 @@ export function Llevar() {
               {/* Barra de búsqueda */}
               <div
                 className="input-group rounded shadow-sm"
-                style={{ flex: 1, height: "38px" }}
+                style={{ flex: 1, height: "38px", width: "auto" }}
               >
                 <span className="input-group-text bg-light  d-flex align-items-center">
                   <FontAwesomeIcon icon={faSearch} className="text-primary" />
@@ -118,7 +117,7 @@ export function Llevar() {
                   type="text"
                   className="form-control p-2"
                   placeholder="Buscar productos..."
-                  style={{ fontSize: "0.9rem" }}
+                  style={{ fontSize: "0.9rem", width: "200px" }}
                 />
               </div>
 

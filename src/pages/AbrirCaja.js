@@ -11,9 +11,7 @@ import axiosInstance from "../api/AxiosInstance";
 import ToastAlert from "../components/componenteToast/ToastAlert";
 import { useNavigate } from "react-router-dom";
 
-
 export function AbrirCaja() {
-  
   const navigate = useNavigate();
   const [caja, setCajas] = useState([]);
   const {
@@ -22,22 +20,21 @@ export function AbrirCaja() {
     formState: { errors },
   } = useForm();
 
-  const  getCajas = async() =>{
-    try{
+  const getCajas = async () => {
+    try {
       const response = await axiosInstance.get("/cajas/getCajas");
-      if(response.data.success){
+      if (response.data.success) {
         setCajas(response.data.cajas);
-      }else{
-        ToastAlert('error', response.data.message);
-       
+      } else {
+        ToastAlert("error", response.data.message);
       }
-    }catch(error){
-      ToastAlert('error','Error de conexion'+error);
+    } catch (error) {
+      ToastAlert("error", "Error de conexion" + error);
     }
-  }
-  useEffect(()=>{
+  };
+  useEffect(() => {
     getCajas();
-  },[]);
+  }, []);
 
   const onSubmit = async (data) => {
     try {
@@ -59,8 +56,7 @@ export function AbrirCaja() {
         console.log("LocalStorage:", JSON.parse(localStorage.getItem("caja")));
         setTimeout(() => {
           window.location.href = "/vender/ventasMesas";
-
-        }, 100); 
+        }, 100);
       } else {
         ToastAlert("error", response.data.message);
       }
@@ -68,7 +64,6 @@ export function AbrirCaja() {
       ToastAlert("error", "Error al abrir la caja");
     }
   };
-
 
   return (
     <div className="card abrir-caja-container p-3 w-50 m-auto shadow-sm justify-center">

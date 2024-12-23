@@ -66,7 +66,9 @@ export function Platos() {
   const handleAddPlatoPreventa = async (id) => {
     try {
       // Envía el ID como parte de la URL
-      const response = await axiosInstance.get(`/vender/addPlatosPreVenta/${id}`);
+      const response = await axiosInstance.get(
+        `/vender/addPlatosPreVenta/${id}`
+      );
 
       if (response.data.success) {
         alert("Agregado a preventa");
@@ -120,7 +122,6 @@ export function Platos() {
         <div className="card shadow-sm flex-grow-1">
           <div className="card-header d-flex align-items-center justify-content-between bg-white border-bottom py-3">
             <h4 className="mb-0 text-dark ">Platos</h4>
-
             <div className="d-flex align-items-center gap-2 w-80">
               {/* Botón para cambiar vista */}
               <button
