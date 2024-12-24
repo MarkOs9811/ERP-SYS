@@ -1,3 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Poppins&display=swap');
+p,span, text,h6{
+  font-family: "Poppins", serif;
+}
+
+
+h3,h2,h1,h4,h5{
+  font-family: "Caveat", serif;
+  font-size: 35px!important;
+  color: #5f2956 !important;
+}
+h4{
+  color: #008080!important;
+}
+
+/* Otros estilos específicos */
+button {
+  font-family: "Caveat", serif;
+}
 /* Estilos base */
 .main-container {
   display: flex;

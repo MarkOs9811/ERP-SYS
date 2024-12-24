@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { redirect, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
 import "../../css/EstilosPlatos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,9 +15,15 @@ import {
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
 import ToastAlert from "../componenteToast/ToastAlert";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, removeItem, setMesaId } from "../../redux/pedidoSlice";
+import {
+  addItem,
+  clearPedido,
+  removeItem,
+  setMesaId,
+} from "../../redux/pedidoSlice";
 import {
   CheckmarkDoneOutline,
+  FastFoodOutline,
   RemoveOutline,
   TrashBinOutline,
   TrashOutline,
@@ -29,7 +35,11 @@ export function Platos() {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // extrayendo datos desde store de redux
   const pedido = useSelector((state) => state.pedido);
+  const mesas = useSelector((state) => state.pedido.mesas);
+  const caja = useSelector((state) => state.caja.caja);
+  // ===========================================
   const navigate = useNavigate();
 
   // Obtener productos desde la API
@@ -74,6 +84,42 @@ export function Platos() {
   if (loading) return <p>Cargando Platos...</p>;
   if (error) return <p>{error}</p>;
 
+  const handleAddPlatoPreventaMesas = async () => {
+    try {
+      // Formatear los datos para enviar al backend
+      console.log(caja.id);
+      const datosPreventa = Object.keys(mesas).flatMap((mesaId) => {
+        return mesas[mesaId].items.map((item) => ({
+          idCaja: caja.id, // ID de la caja
+          idPlato: item.id, // ID del plato
+          idMesa: mesaId, // ID de la mesa
+          cantidad: item.cantidad, // Cantidad del plato
+          precio: item.precio, // Precio del plato
+        }));
+      });
+      // Hacer la solicitud POST
+      const response = await axiosInstance.post(
+        "/vender/addPlatosPreVentaMesa",
+        {
+          pedidos: datosPreventa, // Enviar todos los pedidos
+        }
+      );
+
+      // Manejo de la respuesta
+      if (response.data.success) {
+        ToastAlert("success", response.data.message);
+        Object.keys(mesas).forEach((mesaId) => {
+          dispatch(clearPedido(mesaId));
+        });
+        navigate(`/vender/ventasMesas`);
+      } else {
+        ToastAlert("error", response.data.message);
+      }
+    } catch (error) {
+      ToastAlert("error", "Error de conexión: " + error.message);
+    }
+  };
+
   return (
     <div className="row g-3 vh-60">
       <div className="col-md-12 ">
@@ -90,9 +136,11 @@ export function Platos() {
 
             {/* Título de la card */}
             <h5 className="m-0 d-flex align-items-center">
-              <FontAwesomeIcon
-                icon={faUtensils}
-                className="me-2 text-warning"
+              <FastFoodOutline
+                color={"auto"}
+                width={"35px"}
+                height={"35px"}
+                className="me-2"
               />
               Platos para la mesa {id}
             </h5>
@@ -210,7 +258,10 @@ export function Platos() {
               </div> */}
                 {/* Botón de Realizar Pedido */}
                 <div className="mt-3">
-                  <button className=" btn-realizarPedido btn-block w-100 p-3">
+                  <button
+                    className=" btn-realizarPedido btn-block w-100 p-3"
+                    onClick={() => handleAddPlatoPreventaMesas()}
+                  >
                     <CheckmarkDoneOutline
                       color={"auto"}
                       height="30px"
