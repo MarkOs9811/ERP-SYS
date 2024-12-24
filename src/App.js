@@ -74,7 +74,7 @@ function App() {
                     <div className={`content ${sidebarOpen ? "open" : ""}`}>
                       <Header onToggleSidebar={toggleSidebar} />
                       <Navegacion />
-                      <div className="container-fluid pt-3 px-3">
+                      <div className="container-fluid py-3 px-3 ">
                         <ToastContainer />
                         <Routes>
                           <Route path="/" element={<Home />} />

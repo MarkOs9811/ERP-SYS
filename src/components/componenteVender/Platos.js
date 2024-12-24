@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
-import DataTable from "react-data-table-component";
 import "../../css/EstilosPlatos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -15,19 +14,27 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
 import ToastAlert from "../componenteToast/ToastAlert";
+import { useDispatch, useSelector } from "react-redux";
+import { addItem, removeItem, setMesaId } from "../../redux/pedidoSlice";
+import {
+  CheckmarkDoneOutline,
+  RemoveOutline,
+  TrashBinOutline,
+  TrashOutline,
+} from "react-ionicons";
 
 export function Platos() {
   const { id } = useParams();
   const [productos, setProductos] = useState([]);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(8); // Ajusta el número de productos por página
-
+  const pedido = useSelector((state) => state.pedido);
   const navigate = useNavigate();
 
   // Obtener productos desde la API
   const fetchProductos = async () => {
+    dispatch(setMesaId(id));
     setLoading(true);
     try {
       const response = await axiosInstance.get("/vender/getPlatos");
@@ -47,41 +54,28 @@ export function Platos() {
     fetchProductos();
   }, [id]);
 
-  // Calcular los productos que se muestran en la página actual
-  const indexOfLastProduct = currentPage * rowsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - rowsPerPage;
-  const currentProducts = productos.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  if (loading) return <p>Cargando Platos...</p>;
-  if (error) return <p>{error}</p>;
 
   const habldeVolverMesas = () => {
     // Navegar a Platos.js con el id de la mesa como parámetro
     navigate(`/vender/ventasMesas`);
   };
 
-  const handleAddPlatoPreventa = async (id) => {
-    try {
-      // Envía el ID como parte de la URL
-      const response = await axiosInstance.get(
-        `/vender/addPlatosPreVenta/${id}`
-      );
-
-      if (response.data.success) {
-        alert("Agregado a preventa");
-      } else {
-        ToastAlert("error", response.data.message);
-      }
-    } catch (error) {
-      ToastAlert("error", "Error de conexión");
-    }
+  const handleAddPlatoPreventa = (producto) => {
+    // Añadir el plato para la mesa actual
+    dispatch(addItem({ ...producto, mesaId: id }));
   };
 
+  const handleRemovePlatoPreventa = (productoId) => {
+    // Eliminar el plato de la mesa actual
+    dispatch(removeItem({ id: productoId, mesaId: id }));
+  };
+
+  if (loading) return <p>Cargando Platos...</p>;
+  if (error) return <p>{error}</p>;
+
   return (
-    <div className="row g-3">
+    <div className="row g-3 vh-60">
       <div className="col-md-12 ">
         <div className="card  shadow-sm p-3">
           <div className="d-flex align-items-center justify-content-between">
@@ -106,14 +100,132 @@ export function Platos() {
         </div>
       </div>
       {/* Columna de la cuenta */}
-      <div className="col-md-3 d-flex flex-column ">
-        <div className="card  shadow-sm p-3 flex-grow-1">
-          <h4>Cuenta</h4>
-          <ul>
-            <li>Plato 1: $10</li>
-            <li>Plato 2: $15</li>
-            <li>Total: $25</li>
-          </ul>
+
+      <div className="col-md-3 d-flex flex-column">
+        <div className="card shadow-sm  flex-grow-1">
+          {/* Título */}
+          <div className="card-header p-3 d-flex justify-content-center align-items-center border-bottom">
+            <h4 className="mb-0">Cuenta</h4>
+          </div>
+          <div className="card-body p-3">
+            {/* Verificar si hay productos en la mesa actual */}
+            {pedido.mesas[id] && pedido.mesas[id].items.length > 0 ? (
+              <>
+                {/* Tabla de productos */}
+                <div className="table-responsive tabla-scroll">
+                  <table className="table table-borderless table-sm">
+                    <tbody>
+                      {pedido.mesas[id].items.map((item) => (
+                        <tr key={item.id} className="plato-row ">
+                          <td className="d-flex justify-content-between align-items-center">
+                            <div>
+                              <span className="d-block fw-bold">
+                                {item.nombre}
+                              </span>
+                              <small>
+                                {item.cantidad} x S/.{" "}
+                                {Number(item.precio).toFixed(2)}
+                              </small>
+                            </div>
+                          </td>
+                          <td className="text-right align-middle">
+                            <span>
+                              S/.{" "}
+                              {Number(item.cantidad * item.precio).toFixed(2)}
+                            </span>
+                          </td>
+                          <td className="align-middle">
+                            <button
+                              className="btn-sm eliminar-btn"
+                              onClick={() => handleRemovePlatoPreventa(item.id)}
+                            >
+                              <RemoveOutline color={"auto"} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Total */}
+                <div className="border-top pt-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span className="h5">Total</span>
+                    <span className="h5 fw-bold text-success">
+                      S/.{" "}
+                      {pedido.mesas[id].items
+                        .reduce(
+                          (acc, item) => acc + item.cantidad * item.precio,
+                          0
+                        )
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <small className="text-muted d-block text-end">
+                    IGV: S/.{" "}
+                    {(
+                      pedido.mesas[id].items.reduce(
+                        (acc, item) => acc + item.cantidad * item.precio,
+                        0
+                      ) * 0.18
+                    ).toFixed(2)}
+                  </small>
+                </div>
+
+                {/* Puntos de lealtad */}
+                <div className="mt-3">
+                  <div className="d-flex justify-content-between">
+                    {/* Total de Pedidos */}
+                    <div className="bg-light rounded p-2 text-center flex-fill mr-2">
+                      <small>Total de Platos</small>
+                      <h6 className="text-success mb-0">
+                        {pedido.mesas[id].items.length}
+                      </h6>
+                    </div>
+                    {/* Cantidad Total de Productos */}
+                    <div className="bg-light rounded p-2 text-center flex-fill ml-2">
+                      <small>Cantidad x Plato</small>
+                      <h6 className="text-dark mb-0">
+                        {pedido.mesas[id].items.reduce(
+                          (acc, item) => acc + item.cantidad,
+                          0
+                        )}
+                      </h6>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botones */}
+                {/* <div className="mt-3 d-flex flex-wrap">
+                <button className="btn btn-secondary btn-sm mr-2">
+                  Reembolso
+                </button>
+                <button className="btn btn-secondary btn-sm mr-2">
+                  Nota Cliente
+                </button>
+                <button className="btn btn-secondary btn-sm mr-2">
+                  Ingresar Codigo
+                </button>
+              </div> */}
+                {/* Botón de Realizar Pedido */}
+                <div className="mt-3">
+                  <button className=" btn-realizarPedido btn-block w-100 p-3">
+                    <CheckmarkDoneOutline
+                      color={"auto"}
+                      height="30px"
+                      width="30px"
+                    />{" "}
+                    Realizar Pedido
+                  </button>
+                </div>
+              </>
+            ) : (
+              <p className="text-center text-muted">
+                No hay productos en esta mesa.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
@@ -164,9 +276,7 @@ export function Platos() {
                 <button
                   type="button"
                   key={producto.id}
-                  className="float-left col-md-2 card-platillo  card p-0 mx-2 "
-                  style={{ maxWidth: "300px", minHeight: "180px" }}
-                  s
+                  className="float-left card-platillo  card p-0 mx-2 "
                 >
                   <img
                     src={`${BASE_URL}/storage/${producto.foto}`}
@@ -190,7 +300,7 @@ export function Platos() {
                     <button
                       type="button"
                       className="btn-añadir w-100 me-1"
-                      onClick={() => handleAddPlatoPreventa(producto.id)}
+                      onClick={() => handleAddPlatoPreventa(producto)}
                     >
                       <span className="me-2">
                         <FontAwesomeIcon icon={faPlus} />

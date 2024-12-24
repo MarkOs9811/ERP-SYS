@@ -2,19 +2,13 @@ import { Link, useLocation } from "react-router-dom";
 import "../css/NavegacionEstilos.css";
 import { useState, useEffect } from "react";
 import { LockClosedOutline } from "react-ionicons";
+import { useSelector } from "react-redux";
 
 export function Navegacion() {
   const location = useLocation(); // Obtiene la ubicación actual
   const pathnames = location.pathname.split("/").filter((x) => x);
-  const [estadoCaja, setEstadoCaja] = useState(""); // Estado inicial
 
-  // Efecto para obtener el valor de "caja" desde localStorage
-  useEffect(() => {
-    const caja = JSON.parse(localStorage.getItem("caja"));
-    if (caja) {
-      setEstadoCaja(caja); // Actualiza el estado solo una vez
-    }
-  }, []); // Solo se ejecuta en el montaje inicial
+  const caja = useSelector((state) => state.caja.caja);
 
   // Mapea las rutas a nombres amigables
   const routeNames = {
@@ -72,13 +66,12 @@ export function Navegacion() {
           )}
         </ol>
         <div className="text-end">
-          {estadoCaja?.estado === "abierto" && (
+          {caja?.estado === "abierto" && (
             <Link
               to={"vender/cerrarCaja"}
               className="btn btn-outline-danger d-flex align-items-center gap-1"
             >
-              <LockClosedOutline color={"auto"} />
-              Cerrar Caja
+              <LockClosedOutline color={"auto"} /> Cerrar Caja
             </Link>
           )}
         </div>

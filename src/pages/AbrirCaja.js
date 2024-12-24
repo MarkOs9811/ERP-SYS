@@ -6,13 +6,13 @@ import {
   faTriangleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { useForm } from "react-hook-form";
-import { handlePrecioInput, validatePrecio } from "../hooks/InputHandlers";
+import { useDispatch } from "react-redux";
+import { abrirCaja } from "../redux/cajaSlice";
 import axiosInstance from "../api/AxiosInstance";
 import ToastAlert from "../components/componenteToast/ToastAlert";
-import { useNavigate } from "react-router-dom";
 
 export function AbrirCaja() {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [caja, setCajas] = useState([]);
   const {
     register,
@@ -29,9 +29,10 @@ export function AbrirCaja() {
         ToastAlert("error", response.data.message);
       }
     } catch (error) {
-      ToastAlert("error", "Error de conexion" + error);
+      ToastAlert("error", "Error de conexión");
     }
   };
+
   useEffect(() => {
     getCajas();
   }, []);
@@ -44,16 +45,11 @@ export function AbrirCaja() {
       );
       if (response.data.success) {
         ToastAlert("success", "Caja abierta correctamente");
-
         const { nombreCaja, id } = response.data.caja;
-        const cajaData = {
-          nombre: nombreCaja,
-          id: id,
-          estado: "abierto",
-        };
+        const cajaData = { nombre: nombreCaja, id: id, estado: "abierto" };
 
-        localStorage.setItem("caja", JSON.stringify(cajaData));
-        console.log("LocalStorage:", JSON.parse(localStorage.getItem("caja")));
+        dispatch(abrirCaja(cajaData));
+
         setTimeout(() => {
           window.location.href = "/vender/ventasMesas";
         }, 100);
@@ -75,14 +71,11 @@ export function AbrirCaja() {
         Caja Cerrada, Porfavor apertura una.
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="form-abrir-caja">
-        {/* Selección de caja */}
         <div className="form-floating mb-3">
           <select
             id="caja"
             className={`form-select ${errors.caja ? "is-invalid" : ""}`}
-            {...register("caja", {
-              required: "Seleccione una caja",
-            })}
+            {...register("caja", { required: "Seleccione una caja" })}
           >
             <option value="">Seleccione...</option>
             {caja.map((cajas) => (
@@ -90,9 +83,6 @@ export function AbrirCaja() {
                 {cajas.nombreCaja}
               </option>
             ))}
-            {errors.cajas && (
-              <div className="invalid-feedback">{errors.cajas.message}</div>
-            )}
           </select>
           <label htmlFor="caja">
             <FontAwesomeIcon icon={faCashRegister} /> Seleccionar Caja
@@ -102,7 +92,6 @@ export function AbrirCaja() {
           )}
         </div>
 
-        {/* Monto de apertura */}
         <div className="form-floating mb-3">
           <input
             type="text"
@@ -112,12 +101,10 @@ export function AbrirCaja() {
             }`}
             placeholder="Ingrese el monto inicial"
             {...register("montoApertura", {
-              required: "Ingrese el montode apertura",
-              validate: validatePrecio,
+              required: "Ingrese el monto de apertura",
             })}
-            onInput={handlePrecioInput}
           />
-          <label htmlFor="monto"> Monto de Apertura S/.</label>
+          <label htmlFor="monto">Monto de Apertura S/.</label>
           {errors.montoApertura && (
             <div className="invalid-feedback">
               {errors.montoApertura.message}
@@ -125,7 +112,6 @@ export function AbrirCaja() {
           )}
         </div>
 
-        {/* Botón de enviar */}
         <button type="submit" className="btn-guardar btn-block">
           <FontAwesomeIcon icon={faCashRegister} /> Abrir Caja
         </button>
