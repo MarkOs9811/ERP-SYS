@@ -22,23 +22,26 @@ import {
   setMesaId,
 } from "../../redux/pedidoSlice";
 import {
+  AddOutline,
   CheckmarkDoneOutline,
   FastFoodOutline,
   RemoveOutline,
   TrashBinOutline,
   TrashOutline,
 } from "react-ionicons";
+import { CardPlatos } from "./CardPlatos";
 
 export function Platos() {
-  const { id } = useParams();
+  const { id } = useParams(); //capturamos el id de la URL
   const [productos, setProductos] = useState([]);
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   // extrayendo datos desde store de redux
+  const dispatch = useDispatch();
   const pedido = useSelector((state) => state.pedido);
   const mesas = useSelector((state) => state.pedido.mesas);
   const caja = useSelector((state) => state.caja.caja);
+
   // ===========================================
   const navigate = useNavigate();
 
@@ -121,7 +124,7 @@ export function Platos() {
   };
 
   return (
-    <div className="row g-3 vh-60">
+    <div className="row g-3 ">
       <div className="col-md-12 ">
         <div className="card  shadow-sm p-3">
           <div className="d-flex align-items-center justify-content-between">
@@ -149,22 +152,35 @@ export function Platos() {
       </div>
       {/* Columna de la cuenta */}
 
-      <div className="col-md-3 d-flex flex-column">
-        <div className="card shadow-sm  flex-grow-1">
+      <div className="col-md-3 vh-100">
+        <div
+          className="card shadow-sm d-flex flex-column"
+          style={{ height: "100%" }}
+        >
           {/* Título */}
           <div className="card-header p-3 d-flex justify-content-center align-items-center border-bottom">
             <h4 className="mb-0">Cuenta</h4>
           </div>
-          <div className="card-body p-3">
+          <div
+            className="card-body p-3 d-flex flex-column"
+            style={{ height: "100%" }}
+          >
             {/* Verificar si hay productos en la mesa actual */}
             {pedido.mesas[id] && pedido.mesas[id].items.length > 0 ? (
               <>
                 {/* Tabla de productos */}
-                <div className="table-responsive tabla-scroll">
+                <div
+                  className="tabla-scroll"
+                  style={{
+                    overflowY: "auto",
+                    maxHeight: "calc(100% - 200px)", // Ajusta según el espacio que deba ocupar la tabla
+                    flex: 1,
+                  }}
+                >
                   <table className="table table-borderless table-sm">
                     <tbody>
                       {pedido.mesas[id].items.map((item) => (
-                        <tr key={item.id} className="plato-row ">
+                        <tr key={item.id} className="plato-row">
                           <td className="d-flex justify-content-between align-items-center">
                             <div>
                               <span className="d-block fw-bold">
@@ -244,32 +260,19 @@ export function Platos() {
                   </div>
                 </div>
 
-                {/* Botones */}
-                {/* <div className="mt-3 d-flex flex-wrap">
-                <button className="btn btn-secondary btn-sm mr-2">
-                  Reembolso
-                </button>
-                <button className="btn btn-secondary btn-sm mr-2">
-                  Nota Cliente
-                </button>
-                <button className="btn btn-secondary btn-sm mr-2">
-                  Ingresar Codigo
-                </button>
-              </div> */}
                 {/* Botón de Realizar Pedido */}
-                <div className="mt-3">
-                  <button
-                    className=" btn-realizarPedido btn-block w-100 p-3"
-                    onClick={() => handleAddPlatoPreventaMesas()}
-                  >
-                    <CheckmarkDoneOutline
-                      color={"auto"}
-                      height="30px"
-                      width="30px"
-                    />{" "}
-                    Realizar Pedido
-                  </button>
-                </div>
+
+                <button
+                  className="btn-realizarPedido btn-block w-100 p-3"
+                  onClick={() => handleAddPlatoPreventaMesas()}
+                >
+                  <CheckmarkDoneOutline
+                    color={"auto"}
+                    height="30px"
+                    width="30px"
+                  />{" "}
+                  Realizar Pedido
+                </button>
               </>
             ) : (
               <p className="text-center text-muted">
@@ -322,45 +325,25 @@ export function Platos() {
             </div>
           </div>
           <div className="card-body ">
-            <div className="row g-3 justify-content-start contenedor-platos">
-              {productos.map((producto) => (
-                <button
-                  type="button"
-                  key={producto.id}
-                  className="float-left card-platillo  card p-0 mx-2 "
-                >
-                  <img
-                    src={`${BASE_URL}/storage/${producto.foto}`}
-                    alt={producto.nombre}
-                    className="card-img-top"
-                    style={{
-                      maxWidth: "auto",
-                      maxHeight: "80px",
-                      objectFit: "cover",
-                    }}
+            <div className="justify-content-start contenedor-platos pb-5">
+              {productos.map((producto) => {
+                const mesaId = id; // Mesa actual desde useParams
+                const isSelected = pedido.mesas[mesaId]?.items.some(
+                  (item) => item.id === producto.id
+                );
+
+                return (
+                  <CardPlatos
+                    key={producto.id}
+                    item={producto}
+                    isSelected={isSelected} // Determina si el plato está seleccionado
+                    handleAdd={handleAddPlatoPreventa}
+                    handleRemove={handleRemovePlatoPreventa}
+                    BASE_URL={BASE_URL}
+                    capitalizeFirstLetter={capitalizeFirstLetter}
                   />
-                  <div className="card-body">
-                    <p className="nombre-plato mb-3">
-                      {capitalizeFirstLetter(producto.nombre)}
-                    </p>
-                    <span className="rounded-pill p-1 card-text bg-warning fw-bold precioCard">
-                      S/. {producto.precio}
-                    </span>
-                  </div>
-                  <div className="card-footer border-0 w-100 p-1">
-                    <button
-                      type="button"
-                      className="btn-añadir w-100 me-1"
-                      onClick={() => handleAddPlatoPreventa(producto)}
-                    >
-                      <span className="me-2">
-                        <FontAwesomeIcon icon={faPlus} />
-                      </span>
-                      Agregar
-                    </button>
-                  </div>
-                </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

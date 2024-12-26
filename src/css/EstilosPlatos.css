@@ -1,7 +1,7 @@
 /* EstilosPlatos.css */
 .card {
   border-radius: 8px;
-  transition: transform 0.3s, box-shadow 0.3s;
+ 
 }
 
 .contenedor-platos {
@@ -17,11 +17,13 @@
   flex-basis: 150px;
   transition: all ease-out 0.2s;
   box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.185);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .card-platillo:hover {
-  transform: scale(1.05, 1.05);
+  background-color:#e6e6e6 ;
   z-index: 1000;
+  cursor: pointer;
 }
 
 .card-img-top {
@@ -46,13 +48,31 @@
   font-size: 13px;
   font-weight: 550;
 }
-
-.btn-añadir {
-  border-radius: 15px;
-  border: 1px solid grey;
+/* Estilos comunes para ambos botones */
+.btn-accionesPlatos {
+  border-radius: 12px;
   padding: 8px;
   font-weight: bolder;
   transition: all ease-out 0.2s;
+  border: 1px solid;
+}
+
+.btn-disminuir {
+  border-color: rgb(204, 116, 116);
+}
+
+.btn-disminuir:hover {
+  background-color: rgb(214, 6, 6);
+  color: white;
+}
+
+.btn-disminuir:active {
+  background-color: rgb(167, 0, 0);
+  transform: scale(1.1);
+}
+
+.btn-añadir {
+  border-color: grey;
 }
 
 .btn-añadir:hover {
@@ -61,7 +81,7 @@
 
 .btn-añadir:active {
   background-color: rgb(0, 167, 69);
-  transform: scale(1.1, 1.1);
+  transform: scale(1.1);
 }
 .btn-realizarPedido{
   background-color: rgb(6, 214, 93);
@@ -77,12 +97,23 @@
   color: #ffffff;
 }
 
+/* MANEJANDO ESTILOS DE SLEECT DEPLATOS */
+.selected{
+  border: 2px solid rgb(23, 87, 76)!important;
+  padding: "10px"!important;
+  margin: "10px"!important;
+  cursor: "pointer"!important;
+  background-color:#e7f0ea!important;
+  box-shadow: none!important;
+}
+ 
 /* PARA LOS PLATOS SELECCIONADOS Y AGREGADOS A LA PREVENTA */
 
 .tabla-scroll {
   position: relative;
-  max-height: 50%;
-  overflow-y: auto;
+  max-height: calc(100% - 40%)!important;
+  overflow-y: auto!important;
+  flex: 1;
 }
 
 .plato-row {
