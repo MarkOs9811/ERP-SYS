@@ -27,7 +27,7 @@ function ModalAlertQuestion({
 
   return (
     show && (
-      <div className={`modal-overlay ${show ? "show" : ""}`}>
+      <div className={`modal-overlay ${show ? "show" : ""} m-0 p-0`}>
         {" "}
         {/* Agregar clase show */}
         <div className="contenido-model bg-white">

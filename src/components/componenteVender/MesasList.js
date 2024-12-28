@@ -7,7 +7,7 @@ export function MesasList() {
   const [mesas, setMesas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Hook para navegar entre componentes
+  const navigate = useNavigate();
 
   const fetchMesas = async () => {
     setLoading(true);
@@ -33,7 +33,7 @@ export function MesasList() {
     navigate(`/vender/ventasMesas/platos/${id}`);
   };
   const handleShowPedido = (id) => {
-    alert(id + "mostrando Pedidos de la mesa seleccionada");
+    navigate(`/vender/ventasMesas/preVenta/${id}`);
   };
 
   if (loading) return <p>Cargando mesas...</p>;

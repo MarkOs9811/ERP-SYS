@@ -31,6 +31,7 @@ import { Platos } from "./components/componenteVender/Platos";
 import { Proveedores } from "./pages/Proveedores";
 import { AbrirCaja } from "./pages/AbrirCaja";
 import { CerrarCaja } from "./pages/CerrarCaja";
+import { PreventaMesa } from "./components/componenteVender/PreventaMesa";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -99,6 +100,10 @@ function App() {
                                   <Route
                                     path="ventasMesas/platos/:id"
                                     element={<Platos />}
+                                  />
+                                  <Route
+                                    path="ventasMesas/preVenta/:idMesa"
+                                    element={<PreventaMesa />}
                                   />
                                   <Route
                                     path="cerrarCaja"

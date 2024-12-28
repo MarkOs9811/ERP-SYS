@@ -110,7 +110,7 @@ export function Platos() {
 
       // Manejo de la respuesta
       if (response.data.success) {
-        ToastAlert("success", response.data.message);
+        ToastAlert("success", response.data.message + mesas.nom);
         Object.keys(mesas).forEach((mesaId) => {
           dispatch(clearPedido(mesaId));
         });
