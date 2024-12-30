@@ -29,13 +29,13 @@ import {
 import { CardPlatos } from "./CardPlatos";
 import ToastAlert from "../componenteToast/ToastAlert";
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
-import TransferirToMesa from "./tareasVender/TransferirToMesa";
+import { TransferirToMesa } from "./tareasVender/TransferirToMesa";
 
 export function PreventaMesa() {
   const { idMesa } = useParams();
   const caja = useSelector((state) => state.caja.caja);
   const [preventas, setPreventas] = useState([]);
-  const [total, setTotal] = useState(0);
+
   const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,13 +62,6 @@ export function PreventaMesa() {
         if (numeroMesa) {
           setMesa(numeroMesa);
         }
-
-        // Calcula el total
-        const totalCalculado = items.reduce(
-          (acc, item) => acc + item.plato.precio * item.cantidad,
-          0
-        );
-        setTotal(totalCalculado);
       }
     } catch (error) {
       console.error("Error al obtener preventa de la mesa", error);
@@ -100,14 +93,48 @@ export function PreventaMesa() {
   useEffect(() => {
     fetchProductos();
   }, [idMesa]);
+
+  // Añadir el plato para la mesa actual
   const handleAddPlatoPreventa = (producto) => {
-    // Añadir el plato para la mesa actual
     dispatch(addItem({ ...producto, mesaId: idMesa }));
   };
 
+  // Buscar la mesa correspondiente en el pedido
   const handleRemovePlatoPreventa = (productoId) => {
-    // Eliminar el plato de la mesa actual
-    dispatch(removeItem({ id: productoId, mesaId: idMesa }));
+    const mesa = pedido.mesas[idMesa]; // Acceder a la mesa directamente
+
+    if (mesa) {
+      // Buscar el plato dentro de los items de la mesa
+      const platoExistente = mesa.items.find(
+        (plato) => plato.id === productoId
+      );
+
+      if (platoExistente) {
+        // Si el plato existe en la mesa, eliminarlo de Redux
+        dispatch(removeItem({ id: productoId, mesaId: idMesa }));
+      } else {
+        // Si el plato no existe en el estado de Redux, llamar a la API para eliminarlo
+        handleRemoveFromPreventaByPlato(productoId, idMesa);
+      }
+    } else {
+      console.log("Mesa no encontrada");
+    }
+  };
+
+  // ELIMINAR UN SOLO PLATO DE LA PREVENTA
+  const handleRemoveFromPreventaByPlato = async (idProducto) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/vender/preventa/deletePlatoPreventa/${idProducto}/${idMesa}`
+      );
+      if (response.data.success) {
+        getPreventeMesa();
+      } else {
+        console.log(response.data.message);
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   // AGREGAR LOS PLATOS A LA PREVENTA DE LA MESA O BIEN ACTUALIZAMOS LOS NUEVOS PLATOS AGREGADOS
@@ -193,9 +220,6 @@ export function PreventaMesa() {
   };
 
   const handleCloseTransferir = () => {
-    setModalTransferir(false);
-  };
-  const handleTransferir = async (idMesa) => {
     setModalTransferir(false);
   };
 
@@ -489,8 +513,8 @@ export function PreventaMesa() {
       />
       <TransferirToMesa
         show={modalTransferir}
-        idMesa={idMesaEliminar}
-        handleTransferir={handleTransferir}
+        idMesa={idMesa}
+        mesa={mesa}
         handleCloseModal={handleCloseTransferir}
       />
     </div>
