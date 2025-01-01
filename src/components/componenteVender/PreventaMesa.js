@@ -1,4 +1,4 @@
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
@@ -9,7 +9,6 @@ import {
   CashOutline,
   CheckmarkDoneOutline,
   DocumentTextOutline,
-  EllipsisHorizontalCircleOutline,
   PersonAddOutline,
   RemoveOutline,
   TrashBinOutline,
@@ -26,13 +25,15 @@ import {
   removeItem,
   setMesaId,
 } from "../../redux/pedidoSlice";
+import "../../css/EstilosPlatos.css";
 import { CardPlatos } from "./CardPlatos";
 import ToastAlert from "../componenteToast/ToastAlert";
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
 import { TransferirToMesa } from "./tareasVender/TransferirToMesa";
-
+import { setIdPreventaMesa } from "../../redux/mesaSlice";
+import { getPreventaMesa } from "../../service/preventaService";
 export function PreventaMesa() {
-  const { idMesa } = useParams();
+  const idMesa = useSelector((state) => state.mesa.idPreventaMesa);
   const caja = useSelector((state) => state.caja.caja);
   const [preventas, setPreventas] = useState([]);
 
@@ -48,29 +49,21 @@ export function PreventaMesa() {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
 
   const getPreventeMesa = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `/vender/getPreventaMesa/${idMesa}/${caja.id}`
-      );
-      if (response.data.success) {
-        const items = response.data.preVenta;
-        setPreventas(items);
-        // Obtener el nombre o número de la mesa
-        const numeroMesa = items[0]?.mesa?.numero; // Suponiendo que todos los items tienen el mismo número de mesa
-
-        // Establecer el número de mesa solo una vez
-        if (numeroMesa) {
-          setMesa(numeroMesa);
-        }
+    const result = await getPreventaMesa(idMesa, caja.id);
+    if (result.success) {
+      setPreventas(result.preventas);
+      const numeroMesa = result.preventas[0]?.mesa?.numero;
+      if (numeroMesa) {
+        setMesa(numeroMesa);
       }
-    } catch (error) {
-      console.error("Error al obtener preventa de la mesa", error);
+    } else {
+      console.error(result.message);
     }
   };
 
   useEffect(() => {
     getPreventeMesa();
-  }, []);
+  }, [idMesa, caja]);
 
   // Obtener productos desde la API
   const fetchProductos = async () => {
@@ -223,6 +216,11 @@ export function PreventaMesa() {
     setModalTransferir(false);
   };
 
+  // REALIZAR PAGOS
+  const handleRealizarPago = () => {
+    dispatch(setIdPreventaMesa(idMesa));
+    navigate("/vender/ventasMesas/detallesPago");
+  };
   return (
     <div className="row g-3">
       <div className="col-md-3">
@@ -240,203 +238,206 @@ export function PreventaMesa() {
               Mesa {mesa}
             </h6>
           </div>
-
-          {preventas.length > 0 ||
-          (pedido.mesas[idMesa] && pedido.mesas[idMesa].items.length > 0) ? (
-            <>
-              <div
-                className="tabla-scroll"
-                style={{
-                  overflowY: "auto",
-                  maxHeight: "calc(100% - 200px)",
-                  flex: 1,
-                }}
-              >
-                <table className="table table-borderless table-sm">
-                  <tbody>
-                    {datosCombinados.map((item, index) => (
-                      <tr key={`${item.id}-${index}`} className="plato-row">
-                        <td className="d-flex justify-content-between align-items-center">
-                          <div>
-                            <span className="d-block fw-bold">
-                              {item.plato?.nombre || item.nombre}
-                            </span>
-                            <small>
-                              {item.cantidad} x S/.{" "}
+          <div className="card-body p-0 d-flex flex-column">
+            {preventas.length > 0 ||
+            (pedido.mesas[idMesa] && pedido.mesas[idMesa].items.length > 0) ? (
+              <>
+                <div className="tabla-scroll">
+                  <table className="table table-borderless table-sm">
+                    <tbody>
+                      {datosCombinados.map((item, index) => (
+                        <tr key={`${item.id}-${index}`} className="plato-row">
+                          <td className="d-flex justify-content-between align-items-center">
+                            <div>
+                              <span className="d-block fw-bold">
+                                {item.plato?.nombre || item.nombre}
+                              </span>
+                              <small>
+                                {item.cantidad} x S/.{" "}
+                                {Number(
+                                  item.plato?.precio || item.precio
+                                ).toFixed(2)}
+                              </small>
+                            </div>
+                          </td>
+                          <td className="text-right align-middle">
+                            <span>
+                              S/.{" "}
                               {Number(
-                                item.plato?.precio || item.precio
+                                item.cantidad *
+                                  (item.plato?.precio || item.precio)
                               ).toFixed(2)}
-                            </small>
-                          </div>
-                        </td>
-                        <td className="text-right align-middle">
-                          <span>
-                            S/.{" "}
-                            {Number(
-                              item.cantidad *
-                                (item.plato?.precio || item.precio)
-                            ).toFixed(2)}
-                          </span>
-                        </td>
-                        <td className="align-middle">
-                          <button
-                            className="btn-sm eliminar-btn"
-                            onClick={() => handleRemovePlatoPreventa(item.id)}
-                          >
-                            <RemoveOutline color={"auto"} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {/* Total */}
-              <div className="border-top pt-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <span className="h5">Total</span>
-                  <span className="h5 fw-bold text-success">
-                    S/.{" "}
-                    {datosCombinados
-                      .reduce(
+                            </span>
+                          </td>
+                          <td className="align-middle">
+                            <button
+                              className="btn-sm eliminar-btn"
+                              onClick={() => handleRemovePlatoPreventa(item.id)}
+                            >
+                              <RemoveOutline color={"auto"} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {/* Total */}
+                <div className="border-top pt-3">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <span className="h5">Total</span>
+                    <span className="h5 fw-bold text-success">
+                      S/.{" "}
+                      {datosCombinados
+                        .reduce(
+                          (acc, item) =>
+                            acc +
+                            item.cantidad * (item.plato?.precio || item.precio),
+                          0
+                        )
+                        .toFixed(2)}
+                    </span>
+                  </div>
+                  <small className="text-muted d-block text-end">
+                    IGV: S/.{" "}
+                    {(
+                      datosCombinados.reduce(
                         (acc, item) =>
                           acc +
                           item.cantidad * (item.plato?.precio || item.precio),
                         0
-                      )
-                      .toFixed(2)}
-                  </span>
+                      ) * 0.18
+                    ).toFixed(2)}
+                  </small>
                 </div>
-                <small className="text-muted d-block text-end">
-                  IGV: S/.{" "}
-                  {(
-                    datosCombinados.reduce(
-                      (acc, item) =>
-                        acc +
-                        item.cantidad * (item.plato?.precio || item.precio),
-                      0
-                    ) * 0.18
-                  ).toFixed(2)}
-                </small>
-              </div>
-              {/* Puntos de lealtad */}
-              <div className="mt-3">
-                <div className="d-flex justify-content-between">
-                  {/* Total de Pedidos */}
-                  <div className="bg-light rounded p-2 text-center flex-fill mr-2">
-                    <small>Total de Platos</small>
-                    <h6 className="text-success mb-0">
-                      {datosCombinados.length}
-                    </h6>
-                  </div>
-                  {/* Cantidad Total de Productos */}
-                  <div className="bg-light rounded p-2 text-center flex-fill ml-2">
-                    <small>Cantidad x Plato</small>
-                    <h6 className="text-dark mb-0">
-                      {datosCombinados.reduce(
-                        (acc, item) => acc + item.cantidad,
-                        0
-                      )}
-                    </h6>
+                {/* Puntos de lealtad */}
+                <div className="mt-3">
+                  <div className="d-flex justify-content-between">
+                    {/* Total de Pedidos */}
+                    <div className="bg-light rounded p-2 text-center flex-fill mr-2">
+                      <small>Total de Platos</small>
+                      <h6 className="text-success mb-0">
+                        {datosCombinados.length}
+                      </h6>
+                    </div>
+                    {/* Cantidad Total de Productos */}
+                    <div className="bg-light rounded p-2 text-center flex-fill ml-2">
+                      <small>Cantidad x Plato</small>
+                      <h6 className="text-dark mb-0">
+                        {datosCombinados.reduce(
+                          (acc, item) => acc + item.cantidad,
+                          0
+                        )}
+                      </h6>
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* Botón de Realizar Pedido */}
-              <div className="mt-4">
-                <div className="row g-2">
-                  {/* Realizar Pago */}
-                  <div className="col-12 col-lg-4">
-                    <button className="btn-realizarPedido w-100 h-100 p-3">
-                      <CashOutline color={"auto"} height="24px" width="24px" />{" "}
-                      Realizar Pago
-                    </button>
-                  </div>
+                {/* Botón de Realizar Pedido */}
+                <div className="mt-4">
+                  <div className="row g-2">
+                    {/* Realizar Pago */}
+                    <div className="col-12 col-lg-4">
+                      <button
+                        className="btn-realizarPedido w-100 h-100 p-3"
+                        onClick={() => handleRealizarPago()}
+                      >
+                        <CashOutline
+                          color={"auto"}
+                          height="24px"
+                          width="24px"
+                        />{" "}
+                        Realizar Pago
+                      </button>
+                    </div>
 
-                  {/* Botones restantes */}
-                  <div className="col-12 col-lg-8">
-                    <div className="row g-2">
-                      {/* Actualizar Pedido */}
-                      <div className="col-12">
-                        <button
-                          className="btn btn-warning w-100 p-3"
-                          onClick={handleAddPlatoPreventaMesas}
-                        >
-                          <CheckmarkDoneOutline
-                            color={"auto"}
-                            height="20px"
-                            width="20px"
-                          />{" "}
-                          Actualizar Pedido
-                        </button>
-                      </div>
+                    {/* Botones restantes */}
+                    <div className="col-12 col-lg-8">
+                      <div className="row g-2">
+                        {/* Actualizar Pedido */}
+                        <div className="col-12">
+                          <button
+                            className="btn btn-warning w-100 p-3"
+                            onClick={handleAddPlatoPreventaMesas}
+                          >
+                            <CheckmarkDoneOutline
+                              color={"auto"}
+                              height="20px"
+                              width="20px"
+                            />{" "}
+                            Actualizar Pedido
+                          </button>
+                        </div>
 
-                      {/* Más Opciones */}
-                      <div className="col-12">
-                        <div className="row g-2">
-                          <div className="col-12 col-sm-4 col-lg-4">
-                            <button className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3">
-                              <PersonAddOutline
-                                color="auto"
-                                height="15px"
-                                width="15px"
-                              />
-                              <small className="ms-0 align-middle">
-                                Clientes
-                              </small>
-                            </button>
-                          </div>
-                          <div className="col-12 col-sm-4 col-lg-4">
-                            <button className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3">
-                              <DocumentTextOutline
-                                color="auto"
-                                height="15px"
-                                width="15px"
-                              />
-                              <small className="ms-0 align-middle">Nota</small>
-                            </button>
-                          </div>
-                          <div className="col-12 col-sm-4 col-lg-4">
-                            <button
-                              className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center p-3"
-                              onClick={() => handleCancelarPedidosQuestion()}
-                            >
-                              <TrashBinOutline
-                                color="auto"
-                                height="15px"
-                                width="15px"
-                              />
-                              <small className="ms-0 align-middle">
-                                Cancelar
-                              </small>
-                            </button>
-                          </div>
-                          <div className="col-12">
-                            <button
-                              className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3"
-                              onClick={() => handleTranferirToMesa()}
-                            >
-                              <ArrowRedoOutline
-                                color="auto"
-                                height="20px"
-                                width="20px"
-                              />
-                              <span className="ms-2 align-middle">
-                                Mover a Otra Mesa
-                              </span>
-                            </button>
+                        {/* Más Opciones */}
+                        <div className="col-12">
+                          <div className="row g-2">
+                            <div className="col-12 col-sm-4 col-lg-4">
+                              <button className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3">
+                                <PersonAddOutline
+                                  color="auto"
+                                  height="15px"
+                                  width="15px"
+                                />
+                                <small className="ms-0 align-middle">
+                                  Clientes
+                                </small>
+                              </button>
+                            </div>
+                            <div className="col-12 col-sm-4 col-lg-4">
+                              <button className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3">
+                                <DocumentTextOutline
+                                  color="auto"
+                                  height="15px"
+                                  width="15px"
+                                />
+                                <small className="ms-0 align-middle">
+                                  Nota
+                                </small>
+                              </button>
+                            </div>
+                            <div className="col-12 col-sm-4 col-lg-4">
+                              <button
+                                className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center p-3"
+                                onClick={() => handleCancelarPedidosQuestion()}
+                              >
+                                <TrashBinOutline
+                                  color="auto"
+                                  height="15px"
+                                  width="15px"
+                                />
+                                <small className="ms-0 align-middle">
+                                  Cancelar
+                                </small>
+                              </button>
+                            </div>
+                            <div className="col-12">
+                              <button
+                                className="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center p-3"
+                                onClick={() => handleTranferirToMesa()}
+                              >
+                                <ArrowRedoOutline
+                                  color="auto"
+                                  height="20px"
+                                  width="20px"
+                                />
+                                <span className="ms-2 align-middle">
+                                  Mover a Otra Mesa
+                                </span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </>
-          ) : (
-            <p className="text-center text-muted">
-              No hay productos en esta mesa.
-            </p>
-          )}
+              </>
+            ) : (
+              <p className="text-center text-muted">
+                No hay productos en esta mesa.
+              </p>
+            )}
+          </div>
         </div>
       </div>
       <div className="col-md-9 d-flex flex-column ">

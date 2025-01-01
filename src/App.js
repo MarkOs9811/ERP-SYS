@@ -32,6 +32,7 @@ import { Proveedores } from "./pages/Proveedores";
 import { AbrirCaja } from "./pages/AbrirCaja";
 import { CerrarCaja } from "./pages/CerrarCaja";
 import { PreventaMesa } from "./components/componenteVender/PreventaMesa";
+import { DetallesPago } from "./components/componenteVender/DetallesPago";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -98,12 +99,16 @@ function App() {
                                     element={<Llevar />}
                                   />
                                   <Route
-                                    path="ventasMesas/platos/:id"
+                                    path="ventasMesas/platos"
                                     element={<Platos />}
                                   />
                                   <Route
-                                    path="ventasMesas/preVenta/:idMesa"
+                                    path="ventasMesas/preVenta"
                                     element={<PreventaMesa />}
+                                  />
+                                  <Route
+                                    path="ventasMesas/detallesPago"
+                                    element={<DetallesPago />}
                                   />
                                   <Route
                                     path="cerrarCaja"

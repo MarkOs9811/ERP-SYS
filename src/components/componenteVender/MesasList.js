@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
 import "../../css/EstilosMesas.css";
+import { useDispatch } from "react-redux";
+import { setIdPreventaMesa } from "../../redux/mesaSlice";
 
 export function MesasList() {
   const [mesas, setMesas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const fetchMesas = async () => {
     setLoading(true);
@@ -30,10 +33,12 @@ export function MesasList() {
   }, []);
 
   const handleMesaAddPlato = (id) => {
-    navigate(`/vender/ventasMesas/platos/${id}`);
+    dispatch(setIdPreventaMesa(id));
+    navigate(`/vender/ventasMesas/platos`);
   };
   const handleShowPedido = (id) => {
-    navigate(`/vender/ventasMesas/preVenta/${id}`);
+    dispatch(setIdPreventaMesa(id));
+    navigate(`/vender/ventasMesas/preVenta`);
   };
 
   if (loading) return <p>Cargando mesas...</p>;

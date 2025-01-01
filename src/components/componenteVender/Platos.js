@@ -32,7 +32,7 @@ import {
 import { CardPlatos } from "./CardPlatos";
 
 export function Platos() {
-  const { id } = useParams(); //capturamos el id de la URL
+  const id = useSelector((state) => state.mesa.idPreventaMesa);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

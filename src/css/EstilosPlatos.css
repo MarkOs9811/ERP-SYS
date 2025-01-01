@@ -111,7 +111,7 @@
 
 .tabla-scroll {
   position: relative;
-  max-height: calc(100% - 40%)!important;
+  max-height: 400px!important;
   overflow-y: auto!important;
   flex: 1;
 }
