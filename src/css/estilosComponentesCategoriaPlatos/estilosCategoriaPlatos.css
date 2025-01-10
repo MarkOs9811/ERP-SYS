@@ -1,0 +1,51 @@
+.categoria-platos-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.categoria-plato-card {
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    background: #fff;
+    /* Fondo blanco para mantener la neutralidad */
+    border: 1px solid #c96827;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    text-align: center;
+    padding: 0.5rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.img-categoria {
+    width: auto;
+    height: 50px;
+    /* Aumenta el tamaño de la imagen para destacarla más */
+    transition: transform 0.2s ease-in-out;
+}
+
+
+
+.categoria-plato-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+
+.categoria-plato-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+}
+
+.categoria-plato-text p {
+    font-size: 0.7rem;
+    text-align: center;
+    word-wrap: break-word;
+    color: #333;
+    font-weight: bold;
+}

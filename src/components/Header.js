@@ -1,34 +1,35 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUserCircle } from '@fortawesome/free-solid-svg-icons'; // Importar los iconos que deseas usar
+import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faUserCircle } from "@fortawesome/free-solid-svg-icons"; // Importar los iconos que deseas usar
 
 export function Header({ onToggleSidebar }) {
   const BASE_URL = process.env.REACT_APP_BASE_URL;
-  const fotoPerfilLocal = JSON.parse(localStorage.getItem('fotoPerfil'));
-  const fotoPerfil=`${BASE_URL}/storage/${fotoPerfilLocal}`;
+  const fotoPerfilLocal = JSON.parse(localStorage.getItem("fotoPerfil"));
+  const fotoPerfil = `${BASE_URL}/storage/${fotoPerfilLocal}`;
 
   // aqui declaro variables de mi localstorage para mostrarlo en mi vista
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   return (
     <header className="navbar text-dark bg-white border-bottom">
-    <nav className="container-fluid d-flex align-items-center justify-content-between">
+      <nav className="container-fluid d-flex align-items-center justify-content-between">
         {/* Botón de compresión de sidebar */}
         <button className="btn  me-3" onClick={onToggleSidebar}>
-        <FontAwesomeIcon icon={faBars} size="lg" />
+          <FontAwesomeIcon icon={faBars} size="lg" />
         </button>
 
         {/* Icono de usuario */}
         <div className="navbar-right d-flex align-items-center">
-        <div className="">
+          <div className="">
             {/* Muestra el correo del usuario */}
             {user && user.correo ? (
               <p className="mb-0 mx-3">
                 {user.empleado.persona.nombre
                   .toLowerCase() // Convierte todo a minúsculas
-                  .split(' ') // Divide el nombre en palabras
+                  .split(" ") // Divide el nombre en palabras
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Convierte la primera letra de cada palabra a mayúscula
-                  .join(' ')} {/* Vuelve a unir las palabras con un espacio */}
+                  .join(" ")}{" "}
+                {/* Vuelve a unir las palabras con un espacio */}
               </p>
             ) : (
               <p className="mb-0 mx-3">Correo no disponible</p>
@@ -41,14 +42,16 @@ export function Header({ onToggleSidebar }) {
                 src={fotoPerfil}
                 alt="Mi foto"
                 className="img-fluid "
-                style={{ maxWidth: '40px', borderRadius: '50%', marginLeft: '10px' }}
+                style={{
+                  maxWidth: "40px",
+                  borderRadius: "50%",
+                  marginLeft: "10px",
+                }}
               />
             )}
           </div>
         </div>
-
-    </nav>
+      </nav>
     </header>
-
   );
 }

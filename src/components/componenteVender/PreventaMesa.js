@@ -32,6 +32,7 @@ import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
 import { TransferirToMesa } from "./tareasVender/TransferirToMesa";
 import { setIdPreventaMesa } from "../../redux/mesaSlice";
 import { getPreventaMesa } from "../../service/preventaService";
+import { setEstado } from "../../redux/tipoVentaSlice";
 export function PreventaMesa() {
   const idMesa = useSelector((state) => state.mesa.idPreventaMesa);
   const caja = useSelector((state) => state.caja.caja);
@@ -219,6 +220,7 @@ export function PreventaMesa() {
   // REALIZAR PAGOS
   const handleRealizarPago = () => {
     dispatch(setIdPreventaMesa(idMesa));
+    dispatch(setEstado("mesa"));
     navigate("/vender/ventasMesas/detallesPago");
   };
   return (

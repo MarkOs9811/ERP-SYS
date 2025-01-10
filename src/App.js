@@ -26,8 +26,8 @@ import { Almacen } from "./pages/Almacen";
 import { Configuracion } from "./pages/Configuracion";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { Vender } from "./pages/Vender";
-import { Llevar } from "./components/componenteVender/Llevar";
-import { Platos } from "./components/componenteVender/Platos";
+import { Llevar, ToLlevar } from "./components/componenteVender/ToLlevar";
+import { Platos, ToMesa } from "./components/componenteVender/ToMesa";
 import { Proveedores } from "./pages/Proveedores";
 import { AbrirCaja } from "./pages/AbrirCaja";
 import { CerrarCaja } from "./pages/CerrarCaja";
@@ -96,11 +96,11 @@ function App() {
                                   />
                                   <Route
                                     path="ventasLlevar"
-                                    element={<Llevar />}
+                                    element={<ToLlevar />}
                                   />
                                   <Route
                                     path="ventasMesas/platos"
-                                    element={<Platos />}
+                                    element={<ToMesa />}
                                   />
                                   <Route
                                     path="ventasMesas/preVenta"

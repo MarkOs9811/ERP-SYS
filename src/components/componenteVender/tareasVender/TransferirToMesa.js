@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  ArrowForwardCircleOutline,
-  ArrowRedoOutline,
-  CloseCircleOutline,
-} from "react-ionicons";
+import { ArrowRedoOutline } from "react-ionicons";
 import CloseButton from "../../componentesReutilizables/CloseButton";
 import axiosInstance from "../../../api/AxiosInstance";
 import { useForm } from "react-hook-form";
@@ -26,7 +22,6 @@ export function TransferirToMesa({ show, handleCloseModal, idMesa, mesa }) {
       const response = await axiosInstance.get("/vender/mesasDisponibles");
       if (response.data.success) {
         setMesasFree(response.data.mesasFree);
-        console.log(response.data.mesasFree);
       } else {
         console.log("error" + response.data.message);
       }

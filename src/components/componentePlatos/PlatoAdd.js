@@ -8,6 +8,7 @@ import {
   handlePrecioInput,
   validateTelefono,
 } from "../../hooks/InputHandlers";
+import axiosInstanceJava from "../../api/AxiosInstanceJava";
 
 export function PlatoAdd({ handleCloseModal }) {
   const [formData, setFormData] = useState({
@@ -61,13 +62,10 @@ export function PlatoAdd({ handleCloseModal }) {
     }
     try {
       // Envía la solicitud con axios
-      const response = await axiosInstance.post(
-        "/gestionPlatos/addPlatos",
-        formDataToSend
-      );
+      const response = await axiosInstanceJava.post("/platos", formDataToSend);
 
       if (response.data.success) {
-        ToastAlert("success", response.data.message);
+        ToastAlert("success", "Registro exitoso!");
         handleCloseModal();
       } else {
         ToastAlert("error", response.data.message);

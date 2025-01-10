@@ -13,19 +13,25 @@ import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { useTooltips } from "../../hooks/UseToolTips";
 import { PlatoEditar } from "./PlatoEdit";
 import { Modal } from "react-bootstrap";
+import axiosInstanceJava from "../../api/AxiosInstanceJava";
+import ModalAlertQuestion from "../componenteToast/ModalAlertQuestion";
 
 export function PlatoList({ search, upDateList }) {
   const [platosList, setPlatosList] = useState([]);
   const [filterPlatos, setFilterPlatos] = useState([]);
 
-  const BASE_URL = process.env.REACT_APP_BASE_URL;
+  const BASE_URL_JAVA = process.env.REACT_APP_BASE_URL_JAVA;
 
   const getPlatos = async () => {
     try {
-      const response = await axiosInstance.get("/gestionPlatos/getPlatos");
+      const response = await axiosInstanceJava.get("/platos");
       if (response.data.success) {
-        setPlatosList(response.data.platos);
-        setFilterPlatos(response.data.platos);
+        const platos = response.data.data.map((plato) => ({
+          ...plato,
+          estado: parseInt(plato.estado, 10), // Convertir 'estado' a número
+        }));
+        setPlatosList(platos);
+        setFilterPlatos(platos);
       } else {
         console.log(response.data.message);
       }
@@ -58,7 +64,7 @@ export function PlatoList({ search, upDateList }) {
         (categoria?.nombre &&
           categoria.nombre.toLowerCase().includes(searchLower)) ||
         (descripcion && descripcion.toLowerCase().includes(searchLower)) ||
-        (precio && precio.includes(searchLower))
+        (precio && precio.toString().includes(searchLower))
       );
     });
     setFilterPlatos(result);
@@ -68,12 +74,28 @@ export function PlatoList({ search, upDateList }) {
     getPlatos();
   }, [upDateList]);
 
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [arrayPlato, setArrayPlato] = useState([]);
+
+  const handleEliminarQuestion = (plato) => {
+    setShowConfirmDelete(true);
+    setArrayPlato(plato);
+  };
+
+  const handleCloseModalQuestionEliminar = () => {
+    setShowConfirmDelete(false);
+    setArrayPlato([]);
+  };
+
+  const handleEliminar = () => {
+    alert();
+  };
   const columns = [
     {
       name: "Foto",
       selector: (row) => (
         <img
-          src={`${BASE_URL}/storage/${row.foto}`}
+          src={`${BASE_URL_JAVA}/${row.foto}`}
           alt="Foto del Plato"
           style={{
             width: "50px",
@@ -133,6 +155,7 @@ export function PlatoList({ search, upDateList }) {
                   data-bs-toggle="tooltip"
                   data-bs-placement="top"
                   title="Eliminar Plato"
+                  onClick={() => handleEliminarQuestion(row)}
                 >
                   <FontAwesomeIcon icon={faTrashCan} />
                 </button>
@@ -194,6 +217,16 @@ export function PlatoList({ search, upDateList }) {
           />
         </Modal.Body>
       </Modal>
+
+      {/* MODAL PARA ELIMINAR USUARIO */}
+      <ModalAlertQuestion
+        show={showConfirmDelete}
+        idEliminar={arrayPlato.id}
+        nombre={arrayPlato.nombre}
+        tipo={"Plato"}
+        handleEliminar={handleEliminar}
+        handleCloseModal={handleCloseModalQuestionEliminar}
+      />
     </div>
   );
 }

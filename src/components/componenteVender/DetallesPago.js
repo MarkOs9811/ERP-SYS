@@ -1,24 +1,54 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getPreventaMesa } from "../../service/preventaService";
-import {
-  ArrowBackOutline,
-  CardOutline,
-  CashOutline,
-  CheckmarkDoneOutline,
-  PersonOutline,
-  ReceiptOutline,
-  TrashBinOutline,
-} from "react-ionicons";
 import "../../css/EstilosPlatos.css";
 import { useNavigate } from "react-router-dom";
+import {
+  handleInputChange,
+  handleSelectChange,
+} from "../../hooks/InputHandlers";
+import { useForm } from "react-hook-form";
+import { RealizarVenta } from "../../service/RealizarVentaService";
+import ToastAlert from "../componenteToast/ToastAlert";
+import { useEstadoAsyn } from "../../hooks/EstadoAsync";
+import { OpcionesPago } from "./tareasVender/OpcionesPago";
+import { clearPedidoLlevar } from "../../redux/pedidoLlevarSlice";
+import { clearPedido } from "../../redux/pedidoSlice";
+import { DetallePedido } from "./tareasVender/DetallePedido";
+import { RealizarPago } from "./tareasVender/RealizarPago";
 
 export function DetallesPago() {
+  // VARIABELS EN REDUX SI ES QUE LO HAY
   const idMesa = useSelector((state) => state.mesa.idPreventaMesa);
   const caja = useSelector((state) => state.caja.caja);
+  const estadoTipoVenta = useSelector((state) => state.tipoVenta.estado);
+  const usuarioLogeado = JSON.parse(localStorage.getItem("user"));
+  const pedidoLlevar = useSelector((state) => state.pedidoLlevar);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // PARA VALIDAR EL TIPO DE DOCUMENTO
+  const [tipoDocumento, setTipoDocumento] = useState("DNI");
+  const [numeroDocumento, setNumeroDocumento] = useState("");
+  // DATOS DEL CLIENTE
+  const [nombres, setNombres] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [ruc, setRuc] = useState("");
+  const [razonSocial, setRazonSocial] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [numeroCuotas, setNumeroCuotas] = useState("");
+
+  // REACTK HOOK FORM
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+    reset,
+  } = useForm();
   const [preVentas, setPreventas] = useState([]);
   const [mesa, setMesa] = useState(null);
-  const navigate = useNavigate();
+
   const getPreventeMesa = async () => {
     try {
       const result = await getPreventaMesa(idMesa, caja.id);
@@ -37,11 +67,16 @@ export function DetallesPago() {
   };
 
   useEffect(() => {
-    if (idMesa && caja?.id) {
+    if (estadoTipoVenta === "llevar") {
+      setPreventas(pedidoLlevar.items);
+    } else if (idMesa && caja?.id) {
       getPreventeMesa();
+    } else {
+      setPreventas([]);
     }
-  }, [idMesa, caja]);
+  }, [estadoTipoVenta, idMesa, caja, pedidoLlevar]);
 
+  // calculo para el total e igv
   const totalPreventa = preVentas
     .reduce(
       (acc, item) => acc + item.cantidad * (item.plato?.precio || item.precio),
@@ -51,195 +86,268 @@ export function DetallesPago() {
 
   // Calcular el IGV
   const igv = (totalPreventa * 0.18).toFixed(2);
-  const handleVolverMesas = () => {
-    navigate(`/vender/ventasMesas/preVenta`);
+  // =====================================
+
+  const [metodoSeleccionado, setMetodoSeleccionado] = useState(null);
+  const [comprobante, setComprobante] = useState(null);
+  const [tipoComporbante, setTipoComporbante] = useState(false);
+  const [typeTarjeta, setTypeTarjeta] = useState(null);
+  const [tarjetas, setTarjetas] = useState(false);
+  const [cuotas, setCuotas] = useState(false);
+  const [clienteBoleta, setClienteBoleta] = useState(false);
+  const [clienteFactura, setClienteFactura] = useState(false);
+
+  // FUNCION PARA SELECCIONAR EL METODO DE PAGO
+  const handleSelectMetodo = (metodo) => {
+    setMetodoSeleccionado(metodo);
+    setComprobante(false);
+    setTypeTarjeta(false);
+    setClienteFactura(false);
+    setClienteBoleta(false);
+    if (metodo === "tarjeta") {
+      setTipoComporbante(false);
+    } else {
+      setTipoComporbante(true);
+    }
   };
+
+  // FUNCION PARA SLECCIONAR EL TIPO DE TARJETA
+  const handleSelectCardType = (estado) => {
+    setTarjetas(estado);
+    setCuotas(false);
+  };
+  //FUNCION PARA SELECIONAR EL TIPO DE TARJETA DEBITO - CREDITO
+  const handleTypeTarjeta = (typeTarjeta) => {
+    setTypeTarjeta(typeTarjeta);
+    setTipoComporbante(true);
+    setComprobante(null);
+    setClienteFactura(false);
+    setClienteBoleta(false);
+    setCuotas(false);
+  };
+
+  // FUNCION PARA SELECIONAR EL COMPROBANTE DE PAGO
+  const handleSlectComprobante = (comprobante) => {
+    if (metodoSeleccionado === "tarjeta") {
+      setComprobante(comprobante);
+      if (comprobante === "F") {
+        if (typeTarjeta === "debito") {
+          setClienteFactura(true);
+          setClienteBoleta(false);
+          setCuotas(false);
+        } else if (typeTarjeta === "credito") {
+          setClienteFactura(true);
+          setClienteBoleta(false);
+          setCuotas(true);
+        }
+      } else {
+        if (typeTarjeta === "debito") {
+          setClienteFactura(false);
+          setClienteBoleta(false);
+          setCuotas(false);
+        } else {
+          setClienteFactura(false);
+          setClienteBoleta(true);
+          setCuotas(true);
+        }
+      }
+    } else {
+      setComprobante(comprobante);
+      if (comprobante === "F") {
+        setClienteFactura(true);
+        setCuotas(false);
+      } else {
+        setClienteFactura(false);
+        setCuotas(false);
+      }
+    }
+  };
+
+  // funcion para ocutar o mostrar campo de cuotas
+  const handleShowDatosClientes = (estado) => {
+    setCuotas(estado);
+  };
+
+  // funcion para cuando es una factura
+  const handleShowFactura = (estado) => {
+    setCuotas(false);
+  };
+
+  // ESTAS 3 FUNCIONES SE ENCARGAN DE REALIZAR LA VENTA Y REGISTRAR
+  const realizarVentaPago = async (data) => {
+    const result = await RealizarVenta(data);
+    if (result.success) {
+      ToastAlert("success", "Venta realizada con éxito");
+      if (estadoTipoVenta == "llevar") {
+        navigate("/vender/ventasLlevar");
+        dispatch(clearPedidoLlevar());
+      } else {
+        navigate("/vender/ventasMesas");
+        dispatch(clearPedido());
+      }
+    } else {
+      const errorMessage = result.errorDetails
+        ? `Error: ${result.errorDetails.statusText} (${
+            result.errorDetails.status
+          }). Detalles: ${
+            result.errorDetails.data?.message ||
+            "No se proporcionaron detalles adicionales"
+          }`
+        : result.message;
+
+      ToastAlert(
+        "error",
+        `Ocurrió un error al realizar la venta: ${errorMessage}`
+      );
+    }
+  };
+  const { loading, error, execute } = useEstadoAsyn(realizarVentaPago);
+
+  const handleCrearJson = async () => {
+    let datosCliente = {}; // Objeto independiente para los datos del cliente
+    let metodoPagoFinal = "";
+    // Validar si el método de pago es tarjeta de crédito
+    if (metodoSeleccionado === "tarjeta" && typeTarjeta === "credito") {
+      metodoPagoFinal = metodoSeleccionado + " " + typeTarjeta;
+      if (comprobante === "F") {
+        // Para factura
+        datosCliente = {
+          ruc,
+          razonSocial,
+          direccion,
+        };
+
+        if (!ruc || !razonSocial || !direccion) {
+          ToastAlert("warning", "Porfavor ingrese los campos de factura");
+          return;
+        }
+      } else if (comprobante === "B") {
+        // Para boleta
+        datosCliente = {
+          dni: numeroDocumento,
+          nombre: nombres,
+          apellidos,
+        };
+
+        if (!numeroDocumento || !nombres || !apellidos) {
+          ToastAlert("warning", "Porfavor ingrese los campos de boleta");
+          return;
+        }
+      }
+    } else {
+      metodoPagoFinal = metodoSeleccionado;
+    }
+
+    // Inicializar variables
+    let data = {};
+    let pedidoToLlevar = null;
+
+    // Verificar el estado del tipo de venta y construir el objeto `data`
+    if (estadoTipoVenta === "mesa") {
+      // Datos para ventas en mesa
+      data = {
+        metodoPago: metodoPagoFinal,
+        totalPreventa: totalPreventa ?? 0, // Asegurar que totalPreventa tenga un valor válido
+        comprobante: comprobante ?? "", // Tipo de comprobante (asegurar valor por defecto)
+        cuotas: numeroCuotas ?? 0, // Cuotas si aplica
+        tarjeta: typeTarjeta ?? null, // Tipo de tarjeta (Débito o Crédito)
+        datosCliente: datosCliente ?? {}, // Validar datosCliente para evitar errores
+        idCaja: caja?.id ?? null, // Validar idCaja
+        idMesa: idMesa ?? null, // Validar idMesa
+        idUsuario: usuarioLogeado?.id ?? null, // Validar idUsuario
+        tipoVenta: estadoTipoVenta,
+      };
+    } else {
+      // Construir el objeto para pedido "llevar"
+      pedidoToLlevar = pedidoLlevar?.items ?? [];
+
+      data = {
+        metodoPago: metodoPagoFinal,
+        totalPreventa: totalPreventa ?? 0, // Total preventa
+        comprobante: comprobante ?? "", // Tipo de comprobante
+        cuotas: numeroCuotas ?? 0, // Cuotas si aplica
+        tarjeta: typeTarjeta ?? null, // Tipo de tarjeta (Débito o Crédito)
+        datosCliente: datosCliente ?? {}, // Validar datosCliente
+        pedidoToLlevar, // Agregar pedido a llevar
+        idCaja: caja?.id ?? null, // Validar idCaja
+        idMesa: null, // idMesa es null porque es "llevar"
+        idUsuario: usuarioLogeado?.id ?? null, // Validar idUsuario
+        tipoVenta: estadoTipoVenta,
+      };
+    }
+
+    // Validaciones generales antes de continuar
+    if (!metodoPagoFinal || !totalPreventa || !comprobante) {
+      ToastAlert(
+        "warning",
+        "Por favor seleccione el método de pago y complete todos los campos requeridos."
+      );
+      return;
+    }
+
+    // Mostrar en consola el JSON generado para depuración
+    console.log("Datos enviados:", data);
+
+    await execute(data);
+  };
+  // =======================================================================
+
   return (
-    <div className="row g-3">
-      <div className="col-md-3 ">
-        <div className="card p-3 shadow-sm" style={{ height: "100%" }}>
-          <div className="card-header d-flex align-items-center justify-content-cente">
-            <button
-              className="btn btn-outline-dark me-auto"
-              onClick={() => handleVolverMesas()}
-            >
-              <ArrowBackOutline color={"auto"} />
-              Volver
-            </button>
-            <h4 className="text-center text-auto align-middle mx-3">Cuenta </h4>
-            <h6 className="text-center fw-bold align-middle h2 text-success">
-              Mesa {mesa}
-            </h6>
-          </div>
-
-          {preVentas.length > 0 ? (
-            <>
-              <div className="tabla-scroll">
-                <table className="table table-borderless table-sm">
-                  <tbody>
-                    {preVentas.map((item, index) => (
-                      <tr key={`${item.id}-${index}`} className="plato-row">
-                        <td className="d-flex justify-content-between align-items-center">
-                          <div>
-                            <span className="d-block fw-bold">
-                              {item.plato?.nombre || item.nombre}
-                            </span>
-                            <small>
-                              {item.cantidad} x S/.{" "}
-                              {Number(
-                                item.plato?.precio || item.precio
-                              ).toFixed(2)}
-                            </small>
-                          </div>
-                        </td>
-                        <td className="text-right align-middle">
-                          <span>
-                            S/.{" "}
-                            {Number(
-                              item.cantidad *
-                                (item.plato?.precio || item.precio)
-                            ).toFixed(2)}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {/* Total */}
-              <div className="border-top pt-3">
-                <div className="d-flex justify-content-between align-items-center">
-                  <span className="h5">Total</span>
-                  <span className="h5 fw-bold text-success">
-                    S/. {totalPreventa}
-                  </span>
-                </div>
-                <small className="text-muted d-block text-end">
-                  IGV: S/. {igv}
-                </small>
-              </div>
-              {/* Puntos de lealtad */}
-              <div className="mt-3">
-                <div className="d-flex justify-content-between">
-                  <div className="bg-light rounded p-2 text-center flex-fill mr-2">
-                    <small>Total de Platos</small>
-                    <h6 className="text-success mb-0">{preVentas.length}</h6>
-                  </div>
-                  <div className="bg-light rounded p-2 text-center flex-fill ml-2">
-                    <small>Cantidad x Plato</small>
-                    <h6 className="text-dark mb-0">
-                      {preVentas.reduce((acc, item) => acc + item.cantidad, 0)}
-                    </h6>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <p className="text-center text-muted">
-              No hay productos en esta mesa.
-            </p>
-          )}
-        </div>
+    <div className="row g-3 h-100">
+      {/* Columna DetallePedido */}
+      <div className="col-lg-3 col-md-4 col-sm-6 col-12 d-flex flex-column">
+        <DetallePedido
+          idMesa={idMesa}
+          mesa={mesa}
+          caja={caja}
+          estadoTipoVenta={estadoTipoVenta}
+          preVentas={preVentas}
+          totalPreventa={totalPreventa}
+          igv={igv}
+        />
       </div>
 
-      {/* Card de Pago Total */}
-      <div className="col-md-6 h-100">
-        <div className="card p-3 shadow-sm">
-          <h5>Total a Pagar</h5>
-          <div className="d-flex justify-content-between">
-            <span>Total a Pagar</span>
-            <span className="fw-bold text-success">S/. {totalPreventa}</span>
-          </div>
-          <div className="d-flex justify-content-between">
-            <span>IGV</span>
-            <span className="fw-normal text-secondary">S/. {igv}</span>
-          </div>
-          <div className="border-top mt-3 pt-2">
-            <div className="d-flex justify-content-between align-items-center">
-              <span className="h5">Total</span>
-              <span className="h5 fw-bold text-success">
-                S/. {totalPreventa}
-              </span>
-            </div>
-          </div>
-          {/* Opciones de Boleta/Factura */}
-          <div className="mt-4">
-            <h6>Tipo de documento</h6>
-            <div
-              className="btn-group w-100"
-              role="group"
-              aria-label="Tipo de Documento"
-            >
-              <button type="button" className="btn btn-outline-dark p-3 w-50">
-                <ReceiptOutline color={"auto"} /> Boleta
-              </button>
-              <button type="button" className="btn btn-outline-dark p-3 w-50">
-                <ReceiptOutline color={"auto"} /> Factura
-              </button>
-            </div>
-          </div>
-
-          {/* Métodos de pago */}
-          <div className="mt-4">
-            <h6>Método de pago</h6>
-            <div
-              className="btn-group w-100"
-              role="group"
-              aria-label="Método de Pago"
-            >
-              <button
-                type="button"
-                className="btn btn-outline-dark p-3 p-3 w-33"
-              >
-                <CardOutline color={"auto"} /> Tarjeta
-              </button>
-              <button type="button" className="btn btn-outline-dark p-3 w-33">
-                <CashOutline color={"auto"} /> Efectivo
-              </button>
-              <button type="button" className="btn btn-outline-dark p-3 w-33">
-                <img
-                  src="/images/yape-logo.png"
-                  alt="Yape"
-                  className="img-fluid rounded-pill"
-                  style={{ maxHeight: "30px", marginRight: "8px" }}
-                />
-                Yape
-              </button>
-              <button type="button" className="btn btn-outline-dark p-3 w-33">
-                <img
-                  src="/images/plin-log.png"
-                  alt="Plin"
-                  className="img-fluid rounded-pill"
-                  style={{ maxHeight: "30px", marginRight: "8px" }}
-                />
-                Plin
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <button
-              className="btn-realizarPedido w-100 h-100 p-3"
-              onClick={() => console.log("Realizar Pago")}
-            >
-              <CheckmarkDoneOutline color={"auto"} />
-              Realizar Pago
-            </button>
-          </div>
-        </div>
+      {/* Columna OpcionesPago */}
+      <div className="col-lg-6 col-md-8 col-sm-12 col-12 d-flex flex-column">
+        <OpcionesPago
+          handleSelectMetodo={handleSelectMetodo}
+          handleSelectCardType={handleSelectCardType}
+          handleTypeTarjeta={handleTypeTarjeta}
+          handleSlectComprobante={handleSlectComprobante}
+          handleShowDatosClientes={handleShowDatosClientes}
+          handleShowFactura={handleShowFactura}
+          handleSelectChange={handleSelectChange}
+          handleInputChange={handleInputChange}
+          metodoSeleccionado={metodoSeleccionado}
+          clienteFactura={clienteFactura}
+          clienteBoleta={clienteBoleta}
+          tarjetas={tarjetas}
+          typeTarjeta={typeTarjeta}
+          tipoComporbante={tipoComporbante}
+          comprobante={comprobante}
+          tipoDocumento={tipoDocumento}
+          numeroDocumento={numeroDocumento}
+          setNombres={setNombres}
+          setApellidos={setApellidos}
+          setRuc={setRuc}
+          setRazonSocial={setRazonSocial}
+          setDireccion={setDireccion}
+          cuotas={cuotas}
+          setNumeroCuotas={setNumeroCuotas}
+          setTipoDocumento={setTipoDocumento}
+          setNumeroDocumento={setNumeroDocumento}
+        />
       </div>
-      <div className="col-md-3">
-        <div className="card p-3 shadow-sm">
-          <h5>Cliente</h5>
-          <div className="border-top mt-3 pt-2">
-            <div className="d-flex justify-content-between align-items-center">
-              <h6 className="align-middle">
-                <PersonOutline color={"auto"} />
-                <span>Juan Alberto Rodriguez</span>
-              </h6>
-            </div>
-          </div>
-        </div>
+
+      {/* Columna RealizarPago */}
+      <div className="col-lg-3 col-md-12 col-sm-12 col-12 d-flex flex-column">
+        <RealizarPago
+          totalPreventa={totalPreventa}
+          igv={igv}
+          handleCrearJson={handleCrearJson}
+          loading={loading}
+          error={loading}
+        />
       </div>
     </div>
   );
