@@ -33,8 +33,12 @@ import { TransferirToMesa } from "./tareasVender/TransferirToMesa";
 import { setIdPreventaMesa } from "../../redux/mesaSlice";
 import { getPreventaMesa } from "../../service/preventaService";
 import { setEstado } from "../../redux/tipoVentaSlice";
+import { CategoriaPlatos } from "./tareasVender/CategoriaPlatos";
 export function PreventaMesa() {
   const idMesa = useSelector((state) => state.mesa.idPreventaMesa);
+  const categoriaFiltroPlatos = useSelector(
+    (state) => state.categoriaFiltroPlatos.estado
+  );
   const caja = useSelector((state) => state.caja.caja);
   const [preventas, setPreventas] = useState([]);
 
@@ -444,24 +448,15 @@ export function PreventaMesa() {
       </div>
       <div className="col-md-9 d-flex flex-column ">
         <div className="card shadow-sm flex-grow-1">
-          <div className="card-header d-flex align-items-center justify-content-between bg-white border-bottom py-3">
-            <h4 className="mb-0 text-dark ">Platos</h4>
-            <div className="d-flex align-items-center gap-2 w-80">
-              {/* Botón para cambiar vista */}
-              <button
-                className="btn btn-primary rounded shadow-sm d-flex align-items-center justify-content-center"
-                style={{ height: "38px", minWidth: "130px" }}
-              >
-                <FontAwesomeIcon icon={faBasketShopping} className="me-2" />
-                <span>Inventario</span>
-              </button>
-
+          <div className="card-header d-flex flex-wrap bg-white border-bottom py-3">
+            <div className="d-flex align-items-center gap-2 w-100">
+              <h4 className="mb-0 text-dark">Platos</h4>
               {/* Barra de búsqueda */}
               <div
                 className="input-group rounded shadow-sm"
                 style={{ flex: 1, height: "38px", width: "auto" }}
               >
-                <span className="input-group-text bg-light  d-flex align-items-center">
+                <span className="input-group-text bg-light d-flex align-items-center">
                   <FontAwesomeIcon icon={faSearch} className="text-primary" />
                 </span>
                 <input
@@ -472,35 +467,37 @@ export function PreventaMesa() {
                 />
               </div>
 
-              {/* Botón para filtrar */}
-              <button
-                className="btn btn-outline-secondary rounded shadow-sm d-flex align-items-center justify-content-center"
-                style={{ height: "38px", minWidth: "160px" }}
-              >
-                <FontAwesomeIcon icon={faFilter} className=" me-2" />
-                <span>Categoría</span>
-              </button>
+              {/* Opciones rápidas */}
+              <div className="d-flex flex-wrap gap-2 ms-auto">
+                <CategoriaPlatos />
+              </div>
             </div>
           </div>
           <div className="card-body ">
             <div className="justify-content-start contenedor-platos pb-5">
-              {productos.map((producto) => {
-                const mesaId = idMesa; // Mesa actual desde useParams
-                const isSelected = pedido.mesas[mesaId]?.items.some(
-                  (item) => item.id === producto.id
-                );
-                return (
-                  <CardPlatos
-                    key={producto.id}
-                    item={producto}
-                    isSelected={isSelected} // Determina si el plato está seleccionado
-                    handleAdd={handleAddPlatoPreventa}
-                    handleRemove={handleRemovePlatoPreventa}
-                    BASE_URL={BASE_URL}
-                    capitalizeFirstLetter={capitalizeFirstLetter}
-                  />
-                );
-              })}
+              {productos
+                .filter(
+                  (producto) =>
+                    categoriaFiltroPlatos === "todo" ||
+                    producto.categoria.nombre === categoriaFiltroPlatos
+                )
+                .map((producto) => {
+                  const mesaId = idMesa; // Mesa actual desde useParams
+                  const isSelected = pedido.mesas[mesaId]?.items.some(
+                    (item) => item.id === producto.id
+                  );
+                  return (
+                    <CardPlatos
+                      key={producto.id}
+                      item={producto}
+                      isSelected={isSelected} // Determina si el plato está seleccionado
+                      handleAdd={handleAddPlatoPreventa}
+                      handleRemove={handleRemovePlatoPreventa}
+                      BASE_URL={BASE_URL}
+                      capitalizeFirstLetter={capitalizeFirstLetter}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>

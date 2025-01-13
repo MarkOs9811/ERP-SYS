@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { faUtensilSpoon } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "../../../css/estilosComponentesCategoriaPlatos/estilosCategoriaPlatos.css";
 import axiosInstance from "../../../api/AxiosInstance";
 import { useEstadoAsyn } from "../../../hooks/EstadoAsync";
 import { capitalizeFirstLetter } from "../../../hooks/FirstLetterUp";
+import { useDispatch, useSelector } from "react-redux";
+import { setEstadoCategoria } from "../../../redux/categoriaPlatosSlice";
+import { AlarmOutline, GridOutline } from "react-ionicons";
 
 export function CategoriaPlatos() {
   const [categorias, setCategorias] = useState([]); // Estado para las categorías
+  const dispatch = useDispatch();
+  const estadoCategoria = useSelector(
+    (state) => state.categoriaFiltroPlatos.estado
+  );
 
   // Función para obtener las categorías
   const fetchCategorias = async () => {
@@ -32,7 +37,9 @@ export function CategoriaPlatos() {
   useEffect(() => {
     execute(); // Ejecuta la función directamente sin dependencia
   }, []); // Se ejecuta solo una vez al montar
-
+  const handleFiltrarCategoria = (nombreCategoria) => {
+    dispatch(setEstadoCategoria(nombreCategoria));
+  };
   return (
     <div className="categoria-platos-container">
       {/* Mensaje de carga */}
@@ -44,7 +51,13 @@ export function CategoriaPlatos() {
       {/* Mostrar las categorías */}
 
       {categorias.map((categoria) => (
-        <div key={categoria.id} className="categoria-plato-card">
+        <button
+          key={categoria.id}
+          className={`categoria-plato-card ${
+            estadoCategoria == categoria.nombre ? "categoriaSelect" : ""
+          }`}
+          onClick={() => handleFiltrarCategoria(`${categoria.nombre}`)}
+        >
           <div className="categoria-plato-icon">
             <img
               className="img-categoria"
@@ -59,8 +72,21 @@ export function CategoriaPlatos() {
           <div className="categoria-plato-text">
             <p>{capitalizeFirstLetter(categoria.nombre)}</p>
           </div>
-        </div>
+        </button>
       ))}
+      <button
+        className={`categoria-plato-card ${
+          estadoCategoria == "todo" ? "categoriaSelect" : ""
+        }`}
+        onClick={() => handleFiltrarCategoria(`todo`)}
+      >
+        <div className="categoria-plato-icon">
+          <GridOutline color={"auto"} />
+        </div>
+        <div className="categoria-plato-text">
+          <p>Todo</p>
+        </div>
+      </button>
 
       {/* Mensaje cuando no hay categorías */}
       {!loading && !error && categorias.length === 0 && (

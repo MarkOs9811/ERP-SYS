@@ -36,6 +36,9 @@ import { CategoriaPlatos } from "./tareasVender/CategoriaPlatos";
 
 export function ToMesa() {
   const id = useSelector((state) => state.mesa.idPreventaMesa);
+  const categoriaFiltroPlatos = useSelector(
+    (state) => state.categoriaFiltroPlatos.estado
+  );
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -315,24 +318,29 @@ export function ToMesa() {
 
           <div className="card-body ">
             <div className="justify-content-start contenedor-platos pb-5">
-              {productos.map((producto) => {
-                const mesaId = id; // Mesa actual desde useParams
-                const isSelected = pedido.mesas[mesaId]?.items.some(
-                  (item) => item.id === producto.id
-                );
-
-                return (
-                  <CardPlatos
-                    key={producto.id}
-                    item={producto}
-                    isSelected={isSelected} // Determina si el plato está seleccionado
-                    handleAdd={handleAddPlatoPreventa}
-                    handleRemove={handleRemovePlatoPreventa}
-                    BASE_URL={BASE_URL}
-                    capitalizeFirstLetter={capitalizeFirstLetter}
-                  />
-                );
-              })}
+              {productos
+                .filter(
+                  (producto) =>
+                    categoriaFiltroPlatos === "todo" ||
+                    producto.categoria.nombre === categoriaFiltroPlatos
+                )
+                .map((producto) => {
+                  const mesaId = id; // Mesa actual desde useParams
+                  const isSelected = pedido.mesas[mesaId]?.items.some(
+                    (item) => item.id === producto.id
+                  );
+                  return (
+                    <CardPlatos
+                      key={producto.id}
+                      item={producto}
+                      isSelected={isSelected} // Determina si el plato está seleccionado
+                      handleAdd={handleAddPlatoPreventa}
+                      handleRemove={handleRemovePlatoPreventa}
+                      BASE_URL={BASE_URL}
+                      capitalizeFirstLetter={capitalizeFirstLetter}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>

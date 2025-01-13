@@ -44,7 +44,7 @@ export function Usuarios() {
   };
 
   return (
-    <div className="row ">
+    <div className="row g-3">
       {/* Tarjetas de estadísticas */}
       <div className="col-md-4">
         <div className="card shadow-sm text-center stats-card ">
@@ -84,7 +84,7 @@ export function Usuarios() {
         </div>
       </div>
 
-      <div className="col-md-12 mt-4">
+      <div className="col-md-12 ">
         <div className="card border-0 shadow-sm">
           <div className="card-header border-bottom d-flex justify-content-between align-items-center">
             <div className="m-2">

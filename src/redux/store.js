@@ -4,6 +4,8 @@ import pedidoReducer from "./pedidoSlice";
 import mesaReducer from "./mesaSlice";
 import pedidoLlevar from "./pedidoLlevarSlice";
 import tipoVentaReducer from "./tipoVentaSlice";
+import categoriaReducer from "./categoriaPlatosSlice";
+
 const store = configureStore({
   reducer: {
     caja: cajaReducer,
@@ -11,6 +13,7 @@ const store = configureStore({
     mesa: mesaReducer,
     pedidoLlevar: pedidoLlevar,
     tipoVenta: tipoVentaReducer,
+    categoriaFiltroPlatos: categoriaReducer,
   },
 });
 

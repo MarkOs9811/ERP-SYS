@@ -4,16 +4,7 @@ import axiosInstance from "../../api/AxiosInstance";
 import DataTable from "react-data-table-component";
 import "../../css/EstilosPlatos.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowLeft,
-  faBackward,
-  faBasketShopping,
-  faBox,
-  faFilter,
-  faPlus,
-  faSearch,
-  faUtensils,
-} from "@fortawesome/free-solid-svg-icons";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
 import ToastAlert from "../componenteToast/ToastAlert";
 import { CardPlatos } from "./CardPlatos";
@@ -40,8 +31,10 @@ export function ToLlevar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const pedido = useSelector((state) => state.pedidoLlevar);
-  const mesas = useSelector((state) => state.pedido.mesas);
-  const caja = useSelector((state) => state.caja.caja);
+  const categoriaFiltroPlatos = useSelector(
+    (state) => state.categoriaFiltroPlatos.estado
+  );
+
   // Obtener productos desde la API
   const fetchProductos = async () => {
     setLoading(true);
@@ -92,10 +85,7 @@ export function ToLlevar() {
           <div className="card-header p-3 text-center border-bottom">
             <h4>Cuenta Para llevar</h4>
           </div>
-          <div
-            className="card-body p-3 d-flex flex-column"
-            style={{ height: "100%" }}
-          >
+          <div className="card-body p-3 d-flex flex-column">
             {/* Verificar si hay productos en la mesa actual */}
             {pedido.items.length > 0 ? (
               <>
@@ -250,24 +240,29 @@ export function ToLlevar() {
 
           <div className="card-body ">
             <div className="justify-content-start contenedor-platos pb-5">
-              {productos.map((producto) => {
-                const mesaId = id; // Mesa actual desde useParams
-                const isSelected = pedido.items.some(
-                  (item) => item.id === producto.id
-                );
-
-                return (
-                  <CardPlatos
-                    key={producto.id}
-                    item={producto}
-                    isSelected={isSelected} // Determina si el plato está seleccionado
-                    handleAdd={handleAddPlatoPreventa}
-                    handleRemove={handleRemovePlatoPreventa}
-                    BASE_URL={BASE_URL}
-                    capitalizeFirstLetter={capitalizeFirstLetter}
-                  />
-                );
-              })}
+              {productos
+                .filter(
+                  (producto) =>
+                    categoriaFiltroPlatos === "todo" ||
+                    producto.categoria.nombre === categoriaFiltroPlatos
+                )
+                .map((producto) => {
+                  const mesaId = id; // Mesa actual desde useParams
+                  const isSelected = pedido.items.some(
+                    (item) => item.id === producto.id
+                  );
+                  return (
+                    <CardPlatos
+                      key={producto.id}
+                      item={producto}
+                      isSelected={isSelected} // Determina si el plato está seleccionado
+                      handleAdd={handleAddPlatoPreventa}
+                      handleRemove={handleRemovePlatoPreventa}
+                      BASE_URL={BASE_URL}
+                      capitalizeFirstLetter={capitalizeFirstLetter}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>

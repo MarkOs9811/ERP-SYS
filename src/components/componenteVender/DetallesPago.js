@@ -206,23 +206,38 @@ export function DetallesPago() {
   const handleCrearJson = async () => {
     let datosCliente = {}; // Objeto independiente para los datos del cliente
     let metodoPagoFinal = "";
-    // Validar si el método de pago es tarjeta de crédito
-    if (metodoSeleccionado === "tarjeta" && typeTarjeta === "credito") {
-      metodoPagoFinal = metodoSeleccionado + " " + typeTarjeta;
-      if (comprobante === "F") {
-        // Para factura
-        datosCliente = {
-          ruc,
-          razonSocial,
-          direccion,
-        };
 
-        if (!ruc || !razonSocial || !direccion) {
-          ToastAlert("warning", "Porfavor ingrese los campos de factura");
-          return;
-        }
-      } else if (comprobante === "B") {
-        // Para boleta
+    // Validar el método de pago seleccionado
+    if (metodoSeleccionado === "tarjeta") {
+      // Concatenar tarjeta y tipo
+      metodoPagoFinal = metodoSeleccionado + " " + (typeTarjeta || "");
+
+      if (!typeTarjeta) {
+        ToastAlert("warning", "Por favor seleccione el tipo de tarjeta");
+        return;
+      }
+    } else {
+      // Otros métodos de pago (e.g., YAPE, efectivo, etc.)
+      metodoPagoFinal = metodoSeleccionado;
+    }
+
+    // Validar datos del cliente según el tipo de comprobante y condiciones específicas
+    if (comprobante === "F") {
+      // Para factura (siempre se requieren datos del cliente)
+      datosCliente = {
+        ruc,
+        razonSocial,
+        direccion,
+      };
+
+      if (!ruc || !razonSocial || !direccion) {
+        ToastAlert("warning", "Por favor ingrese los campos de factura");
+        return;
+      }
+    } else if (comprobante === "B") {
+      // Para boleta
+      if (metodoSeleccionado === "tarjeta" && typeTarjeta === "credito") {
+        // Solo requerir datos del cliente si es tarjeta y crédito
         datosCliente = {
           dni: numeroDocumento,
           nombre: nombres,
@@ -230,12 +245,13 @@ export function DetallesPago() {
         };
 
         if (!numeroDocumento || !nombres || !apellidos) {
-          ToastAlert("warning", "Porfavor ingrese los campos de boleta");
+          ToastAlert(
+            "warning",
+            "Por favor ingrese los campos de boleta (cliente requerido con tarjeta y crédito)"
+          );
           return;
         }
       }
-    } else {
-      metodoPagoFinal = metodoSeleccionado;
     }
 
     // Inicializar variables
@@ -290,6 +306,7 @@ export function DetallesPago() {
 
     await execute(data);
   };
+
   // =======================================================================
 
   return (
