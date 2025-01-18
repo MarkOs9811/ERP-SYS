@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router, // Cambiado de BrowserRouter a HashRouter
   Routes,
   Route,
   Navigate,
@@ -33,6 +33,7 @@ import { AbrirCaja } from "./pages/AbrirCaja";
 import { CerrarCaja } from "./pages/CerrarCaja";
 import { PreventaMesa } from "./components/componenteVender/PreventaMesa";
 import { DetallesPago } from "./components/componenteVender/DetallesPago";
+import { Ventas } from "./pages/Ventas";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -84,6 +85,10 @@ function App() {
                           <Route
                             path="/almacen/productos"
                             element={<Almacen />}
+                          />
+                          <Route
+                            path="/ventas/misVentas"
+                            element={<Ventas />}
                           />
                           <Route
                             path="/vender/*"

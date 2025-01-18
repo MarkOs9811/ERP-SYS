@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://erp-api.test/api", // URL base para tus endpoints
+  baseURL: "http://erp-api.test/api", // URL pública de Ngrok
   withCredentials: true, // Incluye cookies si tu API las usa
 });
 

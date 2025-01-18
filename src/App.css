@@ -12,6 +12,9 @@ h3,h2,h1,h4,h5{
 h4{
   color: #008080!important;
 }
+.tituloCard{
+  color: #34485c!important;
+}
 
 /* Otros estilos específicos */
 button {
