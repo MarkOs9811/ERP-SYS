@@ -293,21 +293,6 @@ export function ToMesa() {
           <div className="card-header d-flex flex-wrap bg-white border-bottom py-3">
             <div className="d-flex align-items-center gap-2 w-100">
               <h4 className="mb-0 text-dark">Platos</h4>
-              {/* Barra de búsqueda */}
-              <div
-                className="input-group rounded shadow-sm"
-                style={{ flex: 1, height: "38px", width: "auto" }}
-              >
-                <span className="input-group-text bg-light d-flex align-items-center">
-                  <FontAwesomeIcon icon={faSearch} className="text-primary" />
-                </span>
-                <input
-                  type="text"
-                  className="form-control p-2"
-                  placeholder="Buscar productos..."
-                  style={{ fontSize: "0.9rem", width: "200px" }}
-                />
-              </div>
 
               {/* Opciones rápidas */}
               <div className="d-flex flex-wrap gap-2 ms-auto">

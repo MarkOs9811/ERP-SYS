@@ -12,6 +12,7 @@ import {
   Filler,
 } from "chart.js";
 import { getVentas } from "../service/ObtenerVentasDetalle";
+import { Cargando } from "../components/componentesReutilizables/Cargando";
 
 ChartJS.register(
   CategoryScale,
@@ -150,7 +151,7 @@ const GraficoLineaDayVentas = () => {
       {chartData ? (
         <Line ref={chartRef} data={chartData} options={options} />
       ) : (
-        <p>Cargando datos...</p>
+        <Cargando />
       )}
       <div className="mt-3"></div>
     </div>

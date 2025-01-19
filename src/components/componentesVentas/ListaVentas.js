@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axiosInstanceJava from "../../api/AxiosInstanceJava";
 import DataTable from "react-data-table-component";
 import customDataTableStyles from "../../css/estilosComponentesTable/DataTableStyles";
@@ -8,6 +8,8 @@ import {
   HourglassOutline,
 } from "react-ionicons";
 import { getVentas } from "../../service/ObtenerVentasDetalle";
+import { useEstadoAsyn } from "../../hooks/EstadoAsync";
+import { Cargando } from "../componentesReutilizables/Cargando";
 
 export function ListVentas({ search }) {
   const [listVentas, setListVentas] = useState([]);
@@ -26,20 +28,24 @@ export function ListVentas({ search }) {
       },
     },
   ];
-
-  const fetchVentas = async () => {
+  const fetchVentas = useCallback(async () => {
     const result = await getVentas();
     if (result.success) {
       setListVentas(result.data);
       setFilteredVentas(result.data);
     } else {
-      console.error("Error:", result.message);
+      setHasError(true); // Activar estado de error
     }
-  };
+  }, []);
+
+  const { loading, error, execute } = useEstadoAsyn(fetchVentas);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
-    fetchVentas();
-  }, []); // Llama a getVentas solo una vez al montar el componente
+    if (!hasError) {
+      execute();
+    }
+  }, []); // Se detiene si ocurre un error
 
   useEffect(() => {
     // Verifica si el campo de búsqueda está vacío
@@ -106,7 +112,7 @@ export function ListVentas({ search }) {
     },
     {
       name: "Total",
-      selector: (row) => `S/. ${row.total.toFixed(2)}`, // Redondear el total a 2 decimales
+      selector: (row) => `S/. ${parseFloat(row.total).toFixed(2)}`, // Redondear el total a 2 decimales
       sortable: true,
       wrap: true,
       center: true,
@@ -114,14 +120,14 @@ export function ListVentas({ search }) {
 
     {
       name: "Metodo ",
-      selector: (row) => row.metodoPago.nombre,
+      selector: (row) => row.metodoPago?.nombre,
       sortable: true,
       wrap: true,
       center: false,
     },
     {
       name: "Usuario",
-      selector: (row) => row.user.email,
+      selector: (row) => row.user?.email,
       sortable: true,
       wrap: true,
       center: true,
@@ -177,10 +183,12 @@ export function ListVentas({ search }) {
   ];
   return (
     <div className="card">
+      {loading && <Cargando />}
+      {error && <div className="error">{error}</div>}{" "}
       <DataTable
         className="tablaGeneral"
         columns={columns}
-        data={filteredVentas}
+        data={filteredVentas || []}
         pagination
         responsive
         dense

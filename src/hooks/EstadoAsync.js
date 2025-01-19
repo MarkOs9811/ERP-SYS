@@ -8,9 +8,12 @@ export const useEstadoAsyn = (asyncFunction) => {
     setLoading(true);
     setError(null);
     try {
-      await asyncFunction(...args);
+      const result = await asyncFunction(...args);
+      return result;
     } catch (err) {
-      setError(err.message || "Error desconocido");
+      setError(err); // Aquí guardamos el error completo
+      console.error("Error details:", err); // Puedes hacer más con el error aquí, como enviarlo a un servicio de logging
+      throw err; // Lanzamos el error para manejarlo en el componente
     } finally {
       setLoading(false);
     }

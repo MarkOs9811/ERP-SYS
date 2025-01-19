@@ -1,8 +1,8 @@
-import axiosInstanceJava from "../api/AxiosInstanceJava";
 import axiosInstance from "../api/AxiosInstance";
-export const getVentas = async () => {
+
+export const GetInventario = async () => {
   try {
-    const response = await axiosInstance.get("/ventas");
+    const response = await axiosInstance.get("/inventario");
     if (response.data.success) {
       return {
         success: true,
@@ -16,10 +16,10 @@ export const getVentas = async () => {
       };
     }
   } catch (error) {
-    console.error("Error al obtener las ventas:", error);
+    console.error("Error al obtener el Inventario:", error);
     return {
       success: false,
-      message: "Ocurrió un error al obtener las ventas.",
+      message: "Ocurrió un error al obtener el Inventario.",
     };
   }
 };

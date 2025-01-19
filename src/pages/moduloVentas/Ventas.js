@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { ListVentas } from "../components/componentesVentas/ListaVentas";
-import GraficoBarVentas from "../graficosChar/GraficoBarVentas";
-import GraficoLineaEjemplo from "../graficosChar/GraficoLineVentas";
-import "../css/EstilosVentas.css";
-import { getVentas } from "../service/ObtenerVentasDetalle";
-import GraficoLineaDayVentas from "../graficosChar/GraficoLineDayVentas";
+import { ListVentas } from "../../components/componentesVentas/ListaVentas";
+import GraficoBarVentas from "../../graficosChar/GraficoBarVentas";
+import GraficoLineaEjemplo from "../../graficosChar/GraficoLineVentas";
+import "../../css/EstilosVentas.css";
+import { getVentas } from "../../service/ObtenerVentasDetalle";
+import GraficoLineaDayVentas from "../../graficosChar/GraficoLineDayVentas";
 
 export function Ventas() {
   const [search, setSearch] = useState("");
@@ -104,7 +104,7 @@ export function Ventas() {
                     </small>
                   </div>
                 </div>
-                <div className="d-flex justify-content-end ms-auto">
+                <div className="d-flex justify-content-beetwen align-item-center ms-auto">
                   <img
                     src="/images/store.png"
                     alt="tienda"

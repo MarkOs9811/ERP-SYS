@@ -11,12 +11,16 @@
 
 
 .store-image {
-    width: 350px;
+    width: 180px;
+    /* Se ajusta al tamaño del contenedor */
+    height: auto;
+    /* Mantiene la proporción */
     border-radius: 4px;
     filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
     opacity: 0.6;
-    position: relative;
-    right: -40%;
+    top: 50;
+    right: 0;
+    position: absolute;
 }
 
 .card-body-ventasDahs {

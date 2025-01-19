@@ -33,7 +33,8 @@ import { AbrirCaja } from "./pages/AbrirCaja";
 import { CerrarCaja } from "./pages/CerrarCaja";
 import { PreventaMesa } from "./components/componenteVender/PreventaMesa";
 import { DetallesPago } from "./components/componenteVender/DetallesPago";
-import { Ventas } from "./pages/Ventas";
+import { Ventas } from "./pages/moduloVentas/Ventas";
+import { Inventario } from "./pages/moduloVentas/Inventario";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -89,6 +90,10 @@ function App() {
                           <Route
                             path="/ventas/misVentas"
                             element={<Ventas />}
+                          />
+                          <Route
+                            path="/ventas/inventario"
+                            element={<Inventario />}
                           />
                           <Route
                             path="/vender/*"
