@@ -34,7 +34,6 @@ export function InventarioList({ search }) {
       setFilterInventario(result.data);
     } else {
       setHasError(true); // Si ocurre un error, lo manejamos aquí
-      console.log("Error:", result.message); // Aquí accedemos al error
     }
   }, []);
 

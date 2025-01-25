@@ -22,7 +22,7 @@ export function AbrirCaja() {
 
   const getCajas = async () => {
     try {
-      const response = await axiosInstance.get("/cajas/getCajas");
+      const response = await axiosInstance.get("/cajas");
       if (response.data.success) {
         setCajas(response.data.cajas);
       } else {

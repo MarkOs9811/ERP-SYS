@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { redirect, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../api/AxiosInstance";
-import DataTable from "react-data-table-component";
 import "../../css/EstilosPlatos.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { capitalizeFirstLetter } from "../../hooks/FirstLetterUp";
-import ToastAlert from "../componenteToast/ToastAlert";
 import { CardPlatos } from "./CardPlatos";
 import { useDispatch, useSelector } from "react-redux";
 import {
