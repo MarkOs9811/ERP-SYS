@@ -27,7 +27,7 @@ export function Cajas() {
               </div>
             </div>
           </div>
-          <div className="card-body p-0">
+          <div className="card-body p-2">
             <CajasList />
           </div>
         </div>

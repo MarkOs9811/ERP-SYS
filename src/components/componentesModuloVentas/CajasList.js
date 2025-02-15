@@ -13,13 +13,10 @@ export function CajasList({ search }) {
   const fetchCajas = useCallback(async () => {
     try {
       const result = await GetCajas();
-
       if (result.success) {
         setCajas(result.data);
         setFilterCajas(result.data);
-        console.log("Lista de cajas:", result.data); // Mostrar los datos correctamente.
       } else {
-        console.error("Error al obtener cajas:", result.message);
         setHasError(true);
       }
     } catch (error) {

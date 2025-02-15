@@ -172,7 +172,7 @@ export function Inventario() {
                 Mi Inventario
               </h3>
             </div>
-            <div className="d-flex lign-items-center">
+            <div className="d-flex align-items-center">
               <div className="d-flex">
                 <input
                   type="text"

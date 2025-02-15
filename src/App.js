@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {
-  HashRouter as Router, // Cambiado de BrowserRouter a HashRouter
+  //HashRouter as Router,
+  BrowserRouter as Router, // Cambiado de BrowserRouter a HashRouter
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+
 import "./App.css";
 
 // IMPORTACION DE CONTEXTOS
@@ -22,7 +24,7 @@ import { Login } from "./pages/Login";
 import { Home } from "./pages/Home";
 import { MenuPlato } from "./pages/MenuPlato";
 import { Usuarios } from "./pages/Usuarios";
-import { Almacen } from "./pages/Almacen";
+import { Almacen } from "./pages/moduloAlmacen/Almacen";
 import { Configuracion } from "./pages/Configuracion";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { Vender } from "./pages/Vender";
@@ -36,6 +38,11 @@ import { DetallesPago } from "./components/componenteVender/DetallesPago";
 import { Ventas } from "./pages/moduloVentas/Ventas";
 import { Inventario } from "./pages/moduloVentas/Inventario";
 import { Cajas } from "./pages/moduloVentas/Cajas";
+import { Solicitud } from "./pages/moduloVentas/Solicitud";
+import { RealizarSolicitud } from "./pages/moduloVentas/RealizarSolicitud";
+import { Reportes } from "./pages/moduloVentas/Reportes";
+import AjustesVentas from "./pages/moduloVentas/AjustesVentas";
+import { Registro } from "./pages/moduloAlmacen/Registro";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 function App() {
@@ -88,6 +95,11 @@ function App() {
                             path="/almacen/productos"
                             element={<Almacen />}
                           />
+                           {/* RUTAS PARA MODULO ALMACEN */}
+                           <Route
+                            path="/almacen/registro"
+                            element={<Registro/>}
+                          />
                           <Route
                             path="/ventas/misVentas"
                             element={<Ventas />}
@@ -96,6 +108,24 @@ function App() {
                             path="/ventas/inventario"
                             element={<Inventario />}
                           />
+                          <Route
+                            path="/ventas/solicitud"
+                            element={<Solicitud />}
+                          />
+                          <Route
+                            path="/ventas/solicitud/realizarSolicitud"
+                            element={<RealizarSolicitud />}
+                          />
+                          <Route
+                            path="/ventas/reportes"
+                            element={<Reportes/>}
+                          />
+                          <Route
+                            path="/ventas/ajustes-ventas"
+                            element={<AjustesVentas/>}
+                          />
+
+                         
                           <Route path="/ventas/cajas" element={<Cajas />} />
                           <Route
                             path="/vender/*"

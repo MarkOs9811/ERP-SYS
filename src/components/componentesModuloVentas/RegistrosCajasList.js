@@ -42,7 +42,7 @@ export function RegistroCajas({ search }) {
       const usuarioNombreCompleto = `${
         usuario?.empleado?.persona?.nombre || ""
       } ${usuario?.empleado?.persona?.apellidos || ""}`.toLowerCase();
-      
+
       const cajaNombre = caja?.nombreCaja?.toLowerCase() || "";
 
       return (
@@ -144,7 +144,7 @@ export function RegistroCajas({ search }) {
         dense
         fixedHeader
         customStyles={customDataTableStyles}
-        onditionalRowStyles={conditionalRowStyles}
+        conditionalRowStyles={conditionalRowStyles}
         paginationComponentOptions={{
           rowsPerPageText: "Filas por página:",
           rangeSeparatorText: "de",

@@ -4,7 +4,7 @@
 }
 
 .card-header {
-    background-color: #f8fcff!important;
+    background-color: #ffffff!important;
     padding: 20px;
     position: relative;
 }
@@ -33,3 +33,20 @@
     color: #7099d8;
     font-weight: normal;
 }
+
+
+/* estilos para ajustes de ventas */
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: #0d6efd; /* Bootstrap primary color */
+    border-color: #0d6efd;
+  }
+  
+  .custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  }
+  
+  .custom-control-input:not(:checked) ~ .custom-control-label::before {
+    background-color: #e9ecef;
+    border-color: #ced4da;
+  }
+  

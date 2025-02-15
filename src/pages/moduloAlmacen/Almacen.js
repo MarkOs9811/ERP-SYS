@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
-import { AlmacenList } from "../components/componentsAlmacen/AlmacenList";
+import { AlmacenList } from "../../components/componentsAlmacen/AlmacenList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import "../css/EstilosAlmacen.css";
+import "../../css/EstilosAlmacen.css";
+import { Navigate, useNavigate } from "react-router-dom";
 export function Almacen() {
   const [updateList, setUpdateList] = useState(false);
   const [search, setSearch] = useState("");
-
+const navigate= useNavigate();
   const handleCloseModal = () => {
     setUpdateList((prev) => !prev);
   };
-
+  const handleAgregar=()=>{
+    navigate('/almacen/registro');
+  }
   return (
     <div className="row">
       <div className="col-md-12 ">
@@ -31,7 +34,7 @@ export function Almacen() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <button className="btn ms-2">
+                <button className="btn ms-2" onClick={()=>handleAgregar()}>
                   <FontAwesomeIcon icon={faPlus} className="icon" />
                 </button>
               </div>
